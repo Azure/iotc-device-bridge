@@ -81,7 +81,7 @@
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
                     "properties": {
-                        "packageUri": "https://hedgeab3a.blob.core.windows.net/external-files/iotc-integration-az-function.zip?sp=r&st=2018-10-12T00:47:52Z&se=2099-09-11T08:47:52Z&spr=https&sv=2017-11-09&sig=RYHko5rnsmzPwigYclhL6tLwxqYfU4hQb%2F8x4%2BphWNM%3D&sr=b"
+                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-cloud-to-cloud-integration/master/iotc-integration-az-function.zip?token=Anbfx05yMkv_x1sRebJAD81MJ4xCFNY-ks5byhHEwA%3D%3D"
                     }
                 }
             ],
