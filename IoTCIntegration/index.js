@@ -12,14 +12,12 @@ module.exports = async function (context, req) {
     try {
         await handleMessage({ ...parameters, log: context.log, getSecret: getKeyVaultSecret }, req.body.device, req.body.measurements);
     } catch (e) {
-        if (e.message && e.message.startsWith('Invalid format:')) {
-            context.res = {
-                status: 400,
-                body: e.message
-            };
-        } else {
-            throw e;
-        }
+        context.log('[ERROR]', e.message);
+
+        context.res = {
+            status: e.statusCode ? e.statusCode : 500,
+            body: e.message
+        };
     }
 }
 
@@ -39,8 +37,7 @@ async function getKeyVaultSecret(context, secretUrl, forceTokenRefresh = false) 
             const response = await request(options);
             kvToken = response.access_token;
         } catch (e) {
-            context.log('[ERROR] Unable to get Key Vault token', e);
-            throw e;
+            throw new Error('Unable to get Key Vault token');
         }
     }
 
@@ -58,8 +55,7 @@ async function getKeyVaultSecret(context, secretUrl, forceTokenRefresh = false) 
         if (e.statusCode === 401 && !forceTokenRefresh) {
             return await getKeyVaultSecret(context, secretUrl, true);
         } else {
-            context.log('[ERROR] Unable to fetch secret', secretUrl, e);
-            throw e;
+            throw new Error('Unable to fetch secret');
         }
     }
 }

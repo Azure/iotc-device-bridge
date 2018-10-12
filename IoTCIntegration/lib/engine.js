@@ -20,14 +20,23 @@ const deviceCache = {};
 module.exports = async function (context, device, measurements) {
     if (device) {
         if (!device.deviceId || !/^[a-z0-9\-]*$/.test(device.deviceId)) {
-            throw new Error('Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.');
+            throw {
+                message: 'Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.',
+                statusCode: 400
+            };
         }
     } else {
-        throw new Error('Invalid format: a device specification must be provided.');
+        throw {
+            message: 'Invalid format: a device specification must be provided.',
+            statusCode: 400
+        };
     }
 
     if (!validateMeasurements(measurements)) {
-        throw new Error('Invalid format: invalid measurement list.');
+        throw  {
+            message: 'Invalid format: invalid measurement list.',
+            statusCode: 400
+        };
     }
 
     const client = Device.Client.fromConnectionString(await getDeviceConnectionString(context, device), DeviceTransport.Http);
@@ -56,8 +65,7 @@ module.exports = async function (context, device, measurements) {
             });
         });
     } catch (e) {
-        context.log('[ERROR] Unable to send telemetry', device.deviceId, e);
-        throw e;
+        throw new Error(`Unable to send telemetry for device ${device.deviceId}: ${e.message}`);
     }
 };
 
@@ -92,11 +100,12 @@ async function getDeviceConnectionString(context, device) {
 
 async function getDeviceHub(context, device) {
     const deviceId = device.deviceId;
+    const now = Date.now();
 
-    if (deviceCache[deviceId] && deviceCache[deviceId].lasRegisterAttempt && (Date.now() - deviceCache[deviceId].lasRegisterAttempt) < minDeviceRegistrationTimeout) {
-        const message = `[ERROR] Unable to register device ${deviceId}. Minimum registration timeout not yet exceeded.`;
-        context.log(message);
-        throw new Error(message);
+    if (deviceCache[deviceId] && deviceCache[deviceId].lasRegisterAttempt && (now - deviceCache[deviceId].lasRegisterAttempt) < minDeviceRegistrationTimeout) {
+        const backoff = Math.floor((minDeviceRegistrationTimeout - (now - deviceCache[deviceId].lasRegisterAttempt)) / 1000);
+        const message = `Unable to register device ${deviceId}. Minimum registration timeout not yet exceeded. Please try again in ${backoff} seconds`;
+        throw { message, statusCode: 403 };
     }
 
     deviceCache[deviceId] = {
@@ -137,8 +146,11 @@ async function getDeviceHub(context, device) {
                 await new Promise(resolve => setTimeout(resolve, timeout));
             } else if (statusResponse.status === 'assigned' && statusResponse.registrationState && statusResponse.registrationState.assignedHub) {
                 return statusResponse.registrationState.assignedHub;
-            } else if (statusResponse.status === 'failed' && statusResponse.registrationState) {
-                throw new Error(statusResponse.registrationState.errorMessage);
+            } else if (statusResponse.status === 'failed' && statusResponse.registrationState && statusResponse.registrationState.errorCode === 400209) {
+                throw {
+                    message: 'The device may be unassociated or blocked',
+                    statusCode: 403
+                };
             } else {
                 throw new Error();
             }
@@ -146,8 +158,10 @@ async function getDeviceHub(context, device) {
 
         throw new Error('Registration was not successful after maximum number of attempts');
     } catch (e) {
-        context.log('[ERROR] Unable to register device', deviceId, e);
-        throw e;
+        throw {
+            message: `Unable to register device ${deviceId}: ${e.message}`,
+            statusCode: e.statusCode
+        };
     }
 }
 
