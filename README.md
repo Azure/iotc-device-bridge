@@ -10,17 +10,31 @@ The following steps are needed for a successful deployment:
 
 1. Set the `Scope Id` parameter as the value found in your IoT Central application
 `Administration > Device Connection > Scope ID`
+
 2. In `Iotc Sas Key`, enter the primary SAS key for you IoT Central app, found in
 `Administration > Device Connection > Primary Key` (this key will be stored in a Key Vault
 provisioned with the function).
+
+![Scope ID and key](assets/scopeIdAndKey.PNG "Scope ID and key")
+
 3. After the deployment is done, install the NPM packages needed for the function to work. To do this,
 go to the Function App that was deployed to your subscription `Functions > IoTCIntegration > Console tab`.
 In the console, run the command `npm install` (this command might take several minutes to complete).
+
+![Install packages](assets/npmInstall.PNG "Install packages")
+
 4. After the package installation finishes, the Function App needs to be restarted by clicking the
 `Restart` button in `Overview` page.
+
+![Restart Function App](assets/restart.PNG "Restart Function App")
+
 5. The function is now ready to use. External systems can emit device data to an IoT Central device
 by making a POST HTTP request to the function URL. The URL can be obtained in the newly created function App
-`Functions > IoTCIntegration > Get function URL`. The following sample shows the format of the POST body:
+`Functions > IoTCIntegration > Get function URL`.
+
+![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
+
+The following sample shows the format of the POST body:
 
 ```
 {
@@ -41,6 +55,8 @@ in `measurements` must be numbers (i.e., not quoted).
 The device will be automatically created in IoT Central when the first message is received. It will
 show up in your application under `Device Explorer > Unassociated devices`. Until the device is
 associated to a template, HTTP calls to the function will return a 403 error status.
+
+![Associate device](assets/associate.PNG "Associate device")
 
 ## What is being provisioned?
 The template in this repository will provision a Storage Account, the Key Vault needed to store your
