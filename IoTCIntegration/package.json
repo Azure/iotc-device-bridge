@@ -1,0 +1,19 @@
+{
+  "name": "az-fn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "azure-iot-device": "^1.7.4",
+    "azure-iot-device-http": "^1.7.4",
+    "crypto": "^1.0.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
