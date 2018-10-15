@@ -1,8 +1,8 @@
 {
-  "name": "az-fn",
+  "name": "iotc-integration-azure-function",
   "version": "1.0.0",
   "private": true,
-  "description": "",
+  "description": "Sample Azure Function for cloud to cloud integration with Azure IoT Central",
   "main": "index.js",
   "dependencies": {
     "azure-iot-device": "^1.7.4",
@@ -11,9 +11,7 @@
     "request-promise-native": "^1.0.5"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
