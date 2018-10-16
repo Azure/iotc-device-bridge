@@ -1,9 +1,17 @@
+/*!
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const request = require('request-promise-native');
 const handleMessage = require('./lib/engine');
 
+const msiEndpoint = process.env.MSI_ENDPOINT;
+const msiSecret = process.env.MSI_SECRET;
+
 const parameters = {
-    idScope: process.env['ID_SCOPE'],
-    primaryKeyUrl: process.env['IOTC_KEY_URL']
+    idScope: process.env.ID_SCOPE,
+    primaryKeyUrl: process.env.IOTC_KEY_URL
 };
 
 let kvToken;
@@ -27,8 +35,8 @@ module.exports = async function (context, req) {
 async function getKeyVaultSecret(context, secretUrl, forceTokenRefresh = false) {
     if (!kvToken || forceTokenRefresh) {
         const options = {
-            uri: `${process.env["MSI_ENDPOINT"]}/?resource=https://vault.azure.net&api-version=2017-09-01`,
-            headers: { 'Secret': process.env["MSI_SECRET"] },
+            uri: `${msiEndpoint}/?resource=https://vault.azure.net&api-version=2017-09-01`,
+            headers: { 'Secret': msiSecret },
             json: true
         };
 

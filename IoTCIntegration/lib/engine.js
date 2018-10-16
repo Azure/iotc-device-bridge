@@ -1,7 +1,13 @@
+/*!
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const crypto = require('crypto');
 const request = require('request-promise-native');
 const Device = require('azure-iot-device');
 const DeviceTransport = require('azure-iot-device-http');
+const util = require('util')
 
 const registrationHost = 'global.azure-devices-provisioning.net';
 const registrationSasTtl = 3600; // 1 hour
@@ -11,66 +17,51 @@ const minDeviceRegistrationTimeout = 60*1000; // 1 minute
 
 const deviceCache = {};
 
+class StatusError extends Error {
+    constructor (message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+};
+
 /**
- * Handles a device message.
+ * Forwards external telemetry messages for IoT Central devices.
  * @param {{ idScope: string, primaryKeyUrl: string, log: Function, getSecret: (context: Object, secretUrl: string) => string }} context 
  * @param {{ deviceId: string }} device 
  * @param {{ [field: string]: number }} measurements 
  */
 module.exports = async function (context, device, measurements) {
     if (device) {
-        if (!device.deviceId || !/^[a-z0-9\-]*$/.test(device.deviceId)) {
-            throw {
-                message: 'Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.',
-                statusCode: 400
-            };
+        if (!device.deviceId || !/^[a-z0-9\-]+$/.test(device.deviceId)) {
+            throw new StatusError('Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.', 400);
         }
     } else {
-        throw {
-            message: 'Invalid format: a device specification must be provided.',
-            statusCode: 400
-        };
+        throw new StatusError('Invalid format: a device specification must be provided.', 400);
     }
 
     if (!validateMeasurements(measurements)) {
-        throw  {
-            message: 'Invalid format: invalid measurement list.',
-            statusCode: 400
-        };
+        throw new StatusError('Invalid format: invalid measurement list.', 400);
     }
 
     const client = Device.Client.fromConnectionString(await getDeviceConnectionString(context, device), DeviceTransport.Http);
 
     try {
-        await new Promise((resolve, reject) => {
-            client.open((err) => {
-                if (err) {
-                    return reject(err);
-                }
-
-                context.log('[HTTP] Sending telemetry for device', device.deviceId);
-
-                client.sendEvent(new Device.Message(JSON.stringify(measurements)), err => {
-                    if (err) {
-                        // If the device was deleted, we remove its cached connection string
-                        if (err.name === 'DeviceNotFoundError' && deviceCache[device.deviceId]) {
-                            delete deviceCache[device.deviceId].connectionString;
-                        }
-
-                        return reject(err);
-                    }
-
-                    client.close(err => err ? reject(err) : resolve());
-                });
-            });
-        });
+        await util.promisify(client.open.bind(client))();
+        context.log('[HTTP] Sending telemetry for device', device.deviceId);
+        await util.promisify(client.sendEvent.bind(client))(new Device.Message(JSON.stringify(measurements)));
+        await util.promisify(client.close.bind(client))();
     } catch (e) {
+        // If the device was deleted, we remove its cached connection string
+        if (e.name === 'DeviceNotFoundError' && deviceCache[device.deviceId]) {
+            delete deviceCache[device.deviceId].connectionString;
+        }
+
         throw new Error(`Unable to send telemetry for device ${device.deviceId}: ${e.message}`);
     }
 };
 
 /**
- * @returns true if measurements object is valid
+ * @returns true if measurements object is valid, i.e., a map of field names to numbers.
  */
 function validateMeasurements(measurements) {
     if (!measurements || typeof measurements !== 'object') {
@@ -98,14 +89,18 @@ async function getDeviceConnectionString(context, device) {
     return connStr;
 }
 
+/**
+ * Registers this device with DPS, returning the IoT Hub assigned to it.
+ */
 async function getDeviceHub(context, device) {
     const deviceId = device.deviceId;
     const now = Date.now();
 
+    // A 1 minute backoff is enforced for registration attempts, to prevent unauthorized devices
+    // from trying to re-register too often.
     if (deviceCache[deviceId] && deviceCache[deviceId].lasRegisterAttempt && (now - deviceCache[deviceId].lasRegisterAttempt) < minDeviceRegistrationTimeout) {
         const backoff = Math.floor((minDeviceRegistrationTimeout - (now - deviceCache[deviceId].lasRegisterAttempt)) / 1000);
-        const message = `Unable to register device ${deviceId}. Minimum registration timeout not yet exceeded. Please try again in ${backoff} seconds`;
-        throw { message, statusCode: 403 };
+        throw new StatusError(`Unable to register device ${deviceId}. Minimum registration timeout not yet exceeded. Please try again in ${backoff} seconds`, 403);
     }
 
     deviceCache[deviceId] = {
@@ -128,7 +123,7 @@ async function getDeviceHub(context, device) {
         const response = await request(registrationOptions);
 
         if (response.status !== 'assigning' || !response.operationId) {
-            throw new Error();
+            throw new Error('Unknown server response');
         }
 
         const statusOptions = {
@@ -138,6 +133,8 @@ async function getDeviceHub(context, device) {
             headers: { Authorization: sasToken }
         };
 
+        // The first registration call starts the process, we then query the registration status
+        // up to 4 times.
         for (const timeout of [...registrationRetryTimeouts, 0 /* Fail right away after the last attempt */]) {
             context.log('[HTTP] Querying device registration status');
             const statusResponse = await request(statusOptions);
@@ -147,21 +144,15 @@ async function getDeviceHub(context, device) {
             } else if (statusResponse.status === 'assigned' && statusResponse.registrationState && statusResponse.registrationState.assignedHub) {
                 return statusResponse.registrationState.assignedHub;
             } else if (statusResponse.status === 'failed' && statusResponse.registrationState && statusResponse.registrationState.errorCode === 400209) {
-                throw {
-                    message: 'The device may be unassociated or blocked',
-                    statusCode: 403
-                };
+                throw new StatusError('The device may be unassociated or blocked', 403);
             } else {
-                throw new Error();
+                throw new Error('Unknown server response');
             }
         }
 
         throw new Error('Registration was not successful after maximum number of attempts');
     } catch (e) {
-        throw {
-            message: `Unable to register device ${deviceId}: ${e.message}`,
-            statusCode: e.statusCode
-        };
+        throw new StatusError(`Unable to register device ${deviceId}: ${e.message}`, e.statusCode);
     }
 }
 
