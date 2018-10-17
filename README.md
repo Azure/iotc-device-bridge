@@ -90,7 +90,7 @@ To connect a Particle device to Azure IoT Central, create a new webhook integrat
 console. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom
 body format:
 
-```json
+```
 {
   "device": {
     "deviceId": "{{{PARTICLE_DEVICE_ID}}}"
