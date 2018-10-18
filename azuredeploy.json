@@ -41,6 +41,10 @@
             "name": "[variables('planName')]",
             "apiVersion": "2016-09-01",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "iotCentral": "cloud-gateway",
+                "iotCentralCloudGateway": "app-service-plan"
+            },
             "properties": {
                 "name": "[variables('planName')]"
             }
@@ -53,7 +57,7 @@
             "location": "[resourceGroup().location]",
             "tags": {
                 "iotCentral": "cloud-gateway",
-                "iotCentralCloudGateway": true
+                "iotCentralCloudGateway": "function-app"
             },
             "identity": {
                 "type": "SystemAssigned"
