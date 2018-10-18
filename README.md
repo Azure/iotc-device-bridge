@@ -19,7 +19,7 @@ provisioned with the function).
 
 3. After the deployment is done, install the NPM packages needed for the function to work. To do this,
 go to the Function App that was deployed to your subscription `Functions > IoTCIntegration > Console tab`.
-In the console, run the command `npm install` (this command might take several minutes to complete).
+In the console, run the command `npm install` (this command usually takes around 15 minutes to complete).
 
 ![Install packages](assets/npmInstall.PNG "Install packages")
 
@@ -36,7 +36,7 @@ by making a POST HTTP request to the function URL. The URL can be obtained in th
 
 The following sample shows the format of the POST body:
 
-```
+```json
 {
     "device": {
         "deviceId": "my-cloud-device"
@@ -58,9 +58,48 @@ associated to a template, HTTP calls to the function will return a 403 error sta
 
 ![Associate device](assets/associate.PNG "Associate device")
 
-## What is being provisioned?
-The template in this repository will provision a Storage Account, the Key Vault needed to store your
-IoT Central key, an App Service Plan, and a Function App.
+## What is being provisioned? (pricing)
+The template in this repository will provision the following Azure resources:
+- Key Vault, needed to store your IoT Central key
+- Storage Account
+- App Service Plan (S1 tier)
+- Function App
+
+The estimated total cost of these resources is **$75/month**. The majority of this value ($73) comes
+from the App Service Plan being provisioned. We chose this plan because it offers dedicated compute
+resources, which leads to faster server response times, a critical factor for many cloud IoT platforms
+that allow streaming of device data through webhooks. With this setup, the maximum observed performance
+of the Azure Function in this repository was around **1,500 device messages per minute**.
+
+In addition to removing the provisioned resources when not in use, the cost of the solution can be significantly reduced
+by replacing the App Service Plan by a Consumption Plan. While this option does not offer dedicated compute
+resources, it may be enough for testing purposes or applications that tolerate higher server response times
+(more information on Azure Function hosting options can be found [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale)).
+To use a Consumption Plan instead of an App Service Plan, edit the template before deploying, making
+the appropriate changes (a sample template for a Consumption Plan can be found [here](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49)).
+
+![Edit template](assets/editTemplate.PNG "Edit template")
+
+## Limitations
+Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices
+that connect to Azure IoT Central through this Azure Function. To use these features, a device must be
+connected using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
+
+## Example: connecting a Particle device
+To connect a Particle device to Azure IoT Central, create a new webhook integration in the Particle
+console. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom
+body format:
+
+```
+{
+  "device": {
+    "deviceId": "{{{PARTICLE_DEVICE_ID}}}"
+  },
+  "measurements": {
+    "{{{PARTICLE_EVENT_NAME}}}": {{{PARTICLE_EVENT_VALUE}}}
+  }
+}
+```
 
 # Contributing
 
