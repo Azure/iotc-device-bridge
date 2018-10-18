@@ -8,10 +8,10 @@ other IoT platforms into IoT Central using webhooks.
 The `Deploy to Azure` button above can be used to deploy this Azure Function in your subscription.
 The following steps are needed for a successful deployment:
 
-1. Set the `Scope Id` parameter as the value found in your IoT Central application
+1. Set the `Scope ID` parameter as the value found in your IoT Central application
 `Administration > Device Connection > Scope ID`
 
-2. In `Iotc Sas Key`, enter the primary SAS key for you IoT Central app, found in
+2. In `Iot Central SAS Key`, enter the primary SAS key for you IoT Central app, found in
 `Administration > Device Connection > Primary Key` (this key will be stored in a Key Vault
 provisioned with the function).
 

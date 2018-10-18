@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "scopeId": {
+        "scopeID": {
             "type": "String"
         },
-        "iotcSasKey": {
+        "iotCentralSASKey": {
             "type": "String"
         }
     },
@@ -41,6 +41,10 @@
             "name": "[variables('planName')]",
             "apiVersion": "2016-09-01",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "iotCentral": "cloud-gateway",
+                "iotCentralCloudGateway": "app-service-plan"
+            },
             "properties": {
                 "name": "[variables('planName')]"
             }
@@ -51,6 +55,10 @@
             "name": "[variables('functionAppName')]",
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
+            "tags": {
+                "iotCentral": "cloud-gateway",
+                "iotCentralCloudGateway": "function-app"
+            },
             "identity": {
                 "type": "SystemAssigned"
             },
@@ -66,7 +74,7 @@
                         { "name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('functionAppName'))]" },
                         { "name": "FUNCTIONS_EXTENSION_VERSION", "value": "~2" },
                         { "name": "WEBSITE_NODE_DEFAULT_VERSION", "value": "8.4.0" },
-                        { "name": "ID_SCOPE", "value": "[parameters('scopeId')]" },
+                        { "name": "ID_SCOPE", "value": "[parameters('scopeID')]" },
                         { "name": "IOTC_KEY_URL", "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('iotcKeyName'), '/')]" }
                     ]
                 }
@@ -124,7 +132,7 @@
                     "apiVersion": "2015-06-01",
                     "tags": {},
                     "properties": {
-                        "value": "[parameters('iotcSasKey')]"
+                        "value": "[parameters('iotCentralSASKey')]"
                     },
                     "dependsOn": [
                         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
