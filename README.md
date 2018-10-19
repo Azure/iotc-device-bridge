@@ -12,18 +12,22 @@ Take the following steps to deploy an Azure Function into your subscription and 
   - Copy the `Scope ID` and paste it into the `Scope ID` field the custom template. 
   - Copy one of the SAS keys, so either the `Primary Key` or the `Secondary Key`, and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
 provisioned with the function).
+
   ![Scope ID and key](assets/scopeIdAndKey.PNG "Scope ID and key")
 
 3. After the deployment is done, install the required NPM packages in the function. To do this,
 go to the Function App that was deployed to your subscription in the `Functions > IoTCIntegration > Console` tab.
 In the console, run the command `npm install` (this command takes ~20 minutes to complete, so feel free to do something else in that time).
+
 ![Install packages](assets/npmInstall.PNG "Install packages")
 
 4. After the package installation finishes, the Function App needs to be restarted by clicking the
 `Restart` button in `Overview` page.
+
 ![Restart Function App](assets/restart.PNG "Restart Function App")
 
 5. The function is now ready to use. External systems can feed device data through this cloud gateway and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function App in `Functions > IoTCIntegration > Get function URL`.
+
 ![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
 
 Messages sent to the cloud gateway must have the following format in the Body. 
@@ -64,7 +68,8 @@ To reduce the cost of this solution, you can:
 in documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale).
 
 To use a Consumption Plan instead of an App Service Plan, edit the custom template before deploying. Click the `Edit template` button. 
-  ![Edit template](assets/editTemplate.PNG "Edit template")
+
+ ![Edit template](assets/editTemplate.PNG "Edit template")
   
 Replace the segment
 
@@ -98,10 +103,10 @@ with
 {
   "type": "Microsoft.Web/serverfarms",
   "apiVersion": "2015-04-01",
-  "name": "[variables('hostingPlanName')]",
-  "location": "[parameters('location')]",
+  "name": "[variables('planName')]",
+  "location": "[resourceGroup().location]",
   "properties": {
-    "name": "[variables('hostingPlanName')]",
+    "name": "[variables('planName')]",
     "computeMode": "Dynamic",
     "sku": "Dynamic"
   }
@@ -127,7 +132,7 @@ To connect a Particle device through this gateway to Azure IoT Central, go to th
 Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
 
 ## Limitations
-This cloud gateway only forwards messages to IoT Central, and does not propagate messages out. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to Azure IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
+This cloud gateway only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
 
 # Contributing
 
