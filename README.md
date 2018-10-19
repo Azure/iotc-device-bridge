@@ -1,41 +1,32 @@
-# IoT Central cloud to cloud integration
-This repository contains a sample Azure Function that can be used to integrate device messages from
-other IoT platforms into IoT Central using webhooks.
+# IoT Central cloud gateway
+This repository contains everything you need create a cloud gateway into Azure IoT Central that can be used to ingest device data from other sources such as other IoT platforms. It will provision an Azure Function that can be used to transform and forward device messages into IoT Central using HTTP POST requests.
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fiotc-cloud-to-cloud-integration%2Fmaster%2Fazuredeploy.json%3Ftoken%3DAnbfx1q6doAPwo3MSI8vqxTuJhM5cc-eks5byTiGwA%253D%253D)
 
 ## Instructions
-The `Deploy to Azure` button above can be used to deploy this Azure Function in your subscription.
-The following steps are needed for a successful deployment:
+Take the following steps to deploy an Azure Function into your subscription and set up the cloud gateway.
 
-1. Set the `Scope ID` parameter as the value found in your IoT Central application
-`Administration > Device Connection > Scope ID`
+1. Click the `Deploy to Azure` button above. This opens up a custom ARM template in the Azure Portal to deploy the Azure Function.
 
-2. In `Iot Central SAS Key`, enter the primary SAS key for you IoT Central app, found in
-`Administration > Device Connection > Primary Key` (this key will be stored in a Key Vault
+1. Go to your IoT Central application, and navigate to the `Administration > Device Connection` area.
+  - Copy the `Scope ID` and paste it into the `Scope ID` field the custom template. 
+  - Copy one of the SAS keys, so either the `Primary Key` or the `Secondary Key`, and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
 provisioned with the function).
+  ![Scope ID and key](assets/scopeIdAndKey.PNG "Scope ID and key")
 
-![Scope ID and key](assets/scopeIdAndKey.PNG "Scope ID and key")
-
-3. After the deployment is done, install the NPM packages needed for the function to work. To do this,
-go to the Function App that was deployed to your subscription `Functions > IoTCIntegration > Console tab`.
-In the console, run the command `npm install` (this command usually takes around 15 minutes to complete).
-
+3. After the deployment is done, install the required NPM packages in the function. To do this,
+go to the Function App that was deployed to your subscription in the `Functions > IoTCIntegration > Console` tab.
+In the console, run the command `npm install` (this command takes ~20 minutes to complete, so feel free to do something else in that time).
 ![Install packages](assets/npmInstall.PNG "Install packages")
 
 4. After the package installation finishes, the Function App needs to be restarted by clicking the
 `Restart` button in `Overview` page.
-
 ![Restart Function App](assets/restart.PNG "Restart Function App")
 
-5. The function is now ready to use. External systems can emit device data to an IoT Central device
-by making a POST HTTP request to the function URL. The URL can be obtained in the newly created function App
-`Functions > IoTCIntegration > Get function URL`.
-
+5. The function is now ready to use. External systems can feed device data through this cloud gateway and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function App in `Functions > IoTCIntegration > Get function URL`.
 ![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
 
-The following sample shows the format of the POST body:
-
+Messages sent to the cloud gateway must have the following format in the Body. 
 ```json
 {
     "device": {
@@ -49,46 +40,77 @@ The following sample shows the format of the POST body:
 }
 ```
 
-NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields
-in `measurements` must be numbers (i.e., not quoted).
+> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers (i.e. not quoted).
 
-The device will be automatically created in IoT Central when the first message is received. It will
-show up in your application under `Device Explorer > Unassociated devices`. Until the device is
-associated to a template, HTTP calls to the function will return a 403 error status.
+6. When a message with a new `deviceId` is sent to IoT Central by the cloud gateway, a device will be created as an **Unassociated device**. Unassociated devices appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
+
+> NOTE: Until the device is associated to a template, HTTP calls to the function will return a 403 error status.
 
 ![Associate device](assets/associate.PNG "Associate device")
 
 ## What is being provisioned? (pricing)
-The template in this repository will provision the following Azure resources:
+The custom template in this repository will provision the following Azure resources:
 - Key Vault, needed to store your IoT Central key
 - Storage Account
 - App Service Plan (S1 tier)
 - Function App
 
-The estimated total cost of these resources is **$75/month**. The majority of this value ($73) comes
-from the App Service Plan being provisioned. We chose this plan because it offers dedicated compute
-resources, which leads to faster server response times, a critical factor for many cloud IoT platforms
-that allow streaming of device data through webhooks. With this setup, the maximum observed performance
-of the Azure Function in this repository was around **1,500 device messages per minute**.
+The estimated total cost of these resources is **$75/month**. The majority of this cost ($73) comes from the App Service Plan. We chose this plan because it offers dedicated compute
+resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
 
-In addition to removing the provisioned resources when not in use, the cost of the solution can be significantly reduced
-by replacing the App Service Plan by a Consumption Plan. While this option does not offer dedicated compute
-resources, it may be enough for testing purposes or applications that tolerate higher server response times
-(more information on Azure Function hosting options can be found [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale)).
-To use a Consumption Plan instead of an App Service Plan, edit the template before deploying, making
-the appropriate changes (a sample template for a Consumption Plan can be found [here](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49)).
+To reduce the cost of this solution, you can:
+1. **Remove the provisioned resources when they are not in use.**
+2. **Replace the App Service Plan by a Consumption Plan.** While this option does not offer dedicated compute resources, it may be enough for testing purposes or for applications that tolerate higher server response times. You can learn more about the [Azure Function hosting options
+in documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale).
 
-![Edit template](assets/editTemplate.PNG "Edit template")
+To use a Consumption Plan instead of an App Service Plan, edit the custom template before deploying. Click the `Edit template` button. 
+  ![Edit template](assets/editTemplate.PNG "Edit template")
+  
+Replace the segment
 
-## Limitations
-Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices
-that connect to Azure IoT Central through this Azure Function. To use these features, a device must be
-connected using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
+```json
+{
+  "type": "Microsoft.Web/serverfarms",
+  "sku": {
+      "name": "S1",
+      "tier": "Standard",
+      "size": "S1",
+      "family": "S",
+      "capacity": 1
+  },
+  "kind": "app",
+  "name": "[variables('planName')]",
+  "apiVersion": "2016-09-01",
+  "location": "[resourceGroup().location]",
+  "tags": {
+      "iotCentral": "cloud-gateway",
+      "iotCentralCloudGateway": "app-service-plan"
+  },
+  "properties": {
+      "name": "[variables('planName')]"
+  }
+},
+```
 
-## Example: connecting a Particle device
-To connect a Particle device to Azure IoT Central, create a new webhook integration in the Particle
-console. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom
-body format:
+with
+
+```json
+{
+  "type": "Microsoft.Web/serverfarms",
+  "apiVersion": "2015-04-01",
+  "name": "[variables('hostingPlanName')]",
+  "location": "[parameters('location')]",
+  "properties": {
+    "name": "[variables('hostingPlanName')]",
+    "computeMode": "Dynamic",
+    "sku": "Dynamic"
+  }
+},
+```
+Here is the [sample custom template in Github](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49) where this snippet came from.
+
+## Example: connecting a Particle device through the cloud gateway
+To connect a Particle device through this gateway to Azure IoT Central, go to the Particle console, and create a new webhook integration. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom body format:
 
 ```
 {
@@ -99,7 +121,13 @@ body format:
     "{{{PARTICLE_EVENT_NAME}}}": {{{PARTICLE_EVENT_VALUE}}}
   }
 }
+
 ```
+
+Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
+
+## Limitations
+This cloud gateway only forwards messages to IoT Central, and does not propagate messages out. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to Azure IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
 
 # Contributing
 
