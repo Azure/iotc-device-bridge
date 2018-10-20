@@ -89,7 +89,7 @@
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
                     "properties": {
-                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-cloud-to-cloud-integration/master/iotc-integration-az-function.zip?token=Anbfx05yMkv_x1sRebJAD81MJ4xCFNY-ks5byhHEwA%3D%3D"
+                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-cloud-to-cloud-integration/master/iotc-integration-az-function.zip?token=Anbfxzh_d_GK7kDgFHDvqYp6O_S1qNg-ks5b09hCwA%3D%3D"
                     }
                 }
             ],
