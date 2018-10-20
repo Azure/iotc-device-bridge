@@ -114,7 +114,7 @@ with
 ```
 Here is the [sample custom template in Github](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49) where this snippet came from.
 
-## Example: connecting a Particle device through the cloud gateway
+## Example 1: connecting a Particle device through the cloud gateway
 To connect a Particle device through this gateway to Azure IoT Central, go to the Particle console, and create a new webhook integration. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom body format:
 
 ```
@@ -130,6 +130,44 @@ To connect a Particle device through this gateway to Azure IoT Central, go to th
 ```
 
 Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
+
+## Example 2: payload conversion in the cloud gateway - connecting a SigFox device
+Some platforms may not allow the user to specify the format of device messages sent through a
+webhook. For such systems, the message payload must be converted to the expected body format
+before it can be processed by the cloud gateway. This conversion can be performed in the same
+Azure Function that the cloud gateway operates.
+
+In this section, we exemplify this concept by showing how the payload of a SigFox webhook
+integration can be converted to the body format expected by this solution. Device data is
+transmitted from the SigFox cloud in a hexadecimal string format. For convenience, we have
+provided a conversion function for this format, which accepts a subset of the possible
+field types in a SigFox device payload (`int` and `uint` of 8, 16, 32, or 64 bits;
+`float` of 32 or 64 bits; `little-endian` and `big-endian`). To process messages from a
+SigFox webhook integration, the following changes are needed to the `IoTCIntegration > index.js`
+file of the Function App:
+
+- SigFox devices expect a `204` response code. To do this, add the following code snippet
+**after** the call to `handleMessage` in line 21:
+
+```javascript
+context.res = {
+    status: 204
+};
+```
+
+- To convert the message payload, add the following code **before** the call to `handleMessage`
+in line 21 (replacing `payloadDefinition` by yout SigFox payload definition):
+
+```javascript
+const payloadDefinition = 'gforce::uint:8 lat::uint:8 lon::uint:16'; // Replace this by your payload definition
+
+req.body = {
+    device: {
+        deviceId: req.body.device
+    },
+    measurements: require('./converters/sigFox')(payloadDefinition, req.body.data)
+};
+```
 
 ## Limitations
 This cloud gateway only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).

@@ -7,7 +7,9 @@ const crypto = require('crypto');
 const request = require('request-promise-native');
 const Device = require('azure-iot-device');
 const DeviceTransport = require('azure-iot-device-http');
-const util = require('util')
+const util = require('util');
+
+const StatusError = require('../error').StatusError;
 
 const registrationHost = 'global.azure-devices-provisioning.net';
 const registrationSasTtl = 3600; // 1 hour
@@ -16,13 +18,6 @@ const registrationRetryTimeouts = [500, 1000, 2000, 4000];
 const minDeviceRegistrationTimeout = 60*1000; // 1 minute
 
 const deviceCache = {};
-
-class StatusError extends Error {
-    constructor (message, statusCode) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-};
 
 /**
  * Forwards external telemetry messages for IoT Central devices.
