@@ -137,7 +137,7 @@ webhook. For such systems, the message payload must be converted to the expected
 before it can be processed by the cloud gateway. This conversion can be performed in the same
 Azure Function that the cloud gateway operates.
 
-In this section, we exemplify this concept by showing how the payload of a SigFox webhook
+In this section, we demonstrate this concept by showing how the payload of a SigFox webhook
 integration can be converted to the body format expected by this solution. Device data is
 transmitted from the SigFox cloud in a hexadecimal string format. For convenience, we have
 provided a conversion function for this format, which accepts a subset of the possible
