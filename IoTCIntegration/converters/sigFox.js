@@ -5,6 +5,10 @@
 
 const StatusError = require('../error').StatusError;
 
+const supportedTypes = ['int', 'uint', 'float'];
+const supportedSizes = [8, 16, 32, 64];
+const supportedEndianess = ['little-endian', 'big-endian'];
+
 /**
  * Converts SigFox device data in HEX format to a map of measurement field names to values.
  * 
@@ -69,11 +73,11 @@ function parseSigfoxPayloadDefinition(definition) {
             throw new StatusError('Malformed payload definition', 400);
         }
 
-        if (['int', 'uint', 'float'].findIndex(t => t === type) === -1) {
+        if (!supportedTypes.includes(type)) {
             throw new StatusError(`Malformed payload definition: only 'int', 'uint', and 'float' field types are supported`, 400);
         }
 
-        if ([8, 16, 32, 64].findIndex(s => s === size) === -1) {
+        if (!supportedSizes.includes(size)) {
             throw new StatusError('Malformed payload definition: field size must be 8, 16, 32, or 64 bits', 400);
         }
 
@@ -81,7 +85,7 @@ function parseSigfoxPayloadDefinition(definition) {
             throw new StatusError('Malformed payload definition: float fields must be 32 or 64 bits in size', 400);
         }
 
-        if (endianess && (['little-endian', 'big-endian'].findIndex(e => e === endianess) === -1)) {
+        if (endianess && !supportedEndianess.includes(endianess)) {
             throw new StatusError('Malformed payload definition: invalid endianess', 400);
         }
 
