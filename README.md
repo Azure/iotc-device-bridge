@@ -159,7 +159,7 @@ context.res = {
 in line 21 (replacing `payloadDefinition` by yout SigFox payload definition):
 
 ```javascript
-const payloadDefinition = 'gforce::uint:8 lat::uint:8 lon::uint:16'; // Replace this by your payload definition
+const payloadDefinition = 'gforce::uint:8 lat::uint:8 lon::uint:16'; // Replace this with your payload definition
 
 req.body = {
     device: {
