@@ -132,7 +132,7 @@ To connect a Particle device through this gateway to Azure IoT Central, go to th
 Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
 
 ## Example 2: payload conversion in the cloud gateway - connecting a SigFox device
-Some platforms may not allow the user to specify the format of device messages sent through a
+Some platforms may not allow you to specify the format of device messages sent through a
 webhook. For such systems, the message payload must be converted to the expected body format
 before it can be processed by the cloud gateway. This conversion can be performed in the same
 Azure Function that the cloud gateway operates.
@@ -156,7 +156,7 @@ context.res = {
 ```
 
 - To convert the message payload, add the following code **before** the call to `handleMessage`
-in line 21 (replacing `payloadDefinition` by yout SigFox payload definition):
+in line 21 (replacing `payloadDefinition` by your SigFox payload definition):
 
 ```javascript
 const payloadDefinition = 'gforce::uint:8 lat::uint:8 lon::uint:16'; // Replace this with your payload definition
