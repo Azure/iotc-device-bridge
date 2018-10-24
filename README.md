@@ -1,7 +1,7 @@
 # IoT Central cloud gateway
 This repository contains everything you need create a cloud gateway into Azure IoT Central that can be used to ingest device data from other sources such as other IoT platforms. It will provision an Azure Function that can be used to transform and forward device messages into IoT Central using HTTP POST requests.
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fiotc-cloud-to-cloud-integration%2Fmaster%2Fazuredeploy.json%3Ftoken%3DAnbfx1q6doAPwo3MSI8vqxTuJhM5cc-eks5byTiGwA%253D%253D)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fiotc-cloud-to-cloud-integration%2Fmaster%2Fazuredeploy.json%3Ftoken%3DAnbfx2RuC5y_x6GVjHxLwPe3KOQ2zDceks5b2PAawA%253D%253D)
 
 ## Instructions
 Take the following steps to deploy an Azure Function into your subscription and set up the cloud gateway.
