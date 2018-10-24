@@ -169,6 +169,25 @@ req.body = {
 };
 ```
 
+## Example 3: connecting a device from The Things Network
+Devices in The Things Network can be easily connected to IoT Central through this solution. To do so,
+add a new HTTP integration to you application in The Things Network console (`Application > Integrations > add integration > HTTP Integration`).
+Also make sure that your application has a decoder function defined, so the payload of your device
+messages can be automatically converted to JSON before being sent to the Azure Function.
+
+After the integration has be defined, add the following code **before** the call to `handleMessage`
+in line 21 of the `IoTCIntegration > index.js` file of your Azure Function. This will translate
+the body of your HTTP integration to the expected format:
+
+```javascript
+req.body = {
+    device: {
+        deviceId: req.body.dev_id
+    },
+    measurements: req.body.payload_fields
+};
+```
+
 ## Limitations
 This cloud gateway only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
 
