@@ -1,10 +1,10 @@
-# IoT Central cloud gateway
-This repository contains everything you need create a cloud gateway into Azure IoT Central that can be used to ingest device data from other sources such as other IoT platforms. It will provision an Azure Function that can be used to transform and forward device messages into IoT Central using HTTP POST requests.
+# Azure IoT Central Device Bridge
+This repository contains everything you need create a device bridge to connect other IoT clouds such as Sigfox, Particle, and The Things Network (TTN) to IoT Central. The device bridge forwards the messages your devices send to other clouds to your IoT Central app. In your IoT Central app, you can build rules and run analytics on that data, create workflows in Microsoft Flow and Azure Logic apps, export that data, and much more. This solution will provision several Azure resources into your Azure subscription that work together to transform and forward device messages through a webhook integration in Azure Functions.
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fiotc-cloud-to-cloud-integration%2Fmaster%2Fazuredeploy.json%3Ftoken%3DAnbfx2RuC5y_x6GVjHxLwPe3KOQ2zDceks5b2PAawA%253D%253D)
 
 ## Instructions
-Take the following steps to deploy an Azure Function into your subscription and set up the cloud gateway.
+Take the following steps to deploy an Azure Function into your subscription and set up the device bridge.
 
 1. Click the `Deploy to Azure` button above. This opens up a custom ARM template in the Azure Portal to deploy the Azure Function.
 
@@ -26,11 +26,11 @@ In the console, run the command `npm install` (this command takes ~20 minutes to
 
 ![Restart Function App](assets/restart.PNG "Restart Function App")
 
-5. The function is now ready to use. External systems can feed device data through this cloud gateway and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function App in `Functions > IoTCIntegration > Get function URL`.
+5. The function is now ready to use. External systems can feed device data through this device bridge and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function App in `Functions > IoTCIntegration > Get function URL`.
 
 ![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
 
-Messages sent to the cloud gateway must have the following format in the Body. 
+Messages sent to the device bridge must have the following format in the Body:
 ```json
 {
     "device": {
@@ -46,7 +46,7 @@ Messages sent to the cloud gateway must have the following format in the Body.
 
 > NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers (i.e. not quoted).
 
-6. When a message with a new `deviceId` is sent to IoT Central by the cloud gateway, a device will be created as an **Unassociated device**. Unassociated devices appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
+6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a device will be created as an **Unassociated device**. Unassociated devices appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
 
 > NOTE: Until the device is associated to a template, HTTP calls to the function will return a 403 error status.
 
@@ -114,8 +114,8 @@ with
 ```
 Here is the [sample custom template in Github](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49) where this snippet came from.
 
-## Example 1: connecting a Particle device through the cloud gateway
-To connect a Particle device through this gateway to Azure IoT Central, go to the Particle console, and create a new webhook integration. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom body format:
+## Example 1: Connecting Particle devices through the device bridge
+To connect a Particle device through the device bridge to IoT Central, go to the Particle console and create a new webhook integration. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom body format:
 
 ```
 {
@@ -131,11 +131,11 @@ To connect a Particle device through this gateway to Azure IoT Central, go to th
 
 Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
 
-## Example 2: payload conversion in the cloud gateway - connecting a SigFox device
+## Example 2: Connecting Sigfox devices through the device bridge
 Some platforms may not allow you to specify the format of device messages sent through a
 webhook. For such systems, the message payload must be converted to the expected body format
-before it can be processed by the cloud gateway. This conversion can be performed in the same
-Azure Function that the cloud gateway operates.
+before it can be processed by the device bridge. This conversion can be performed in the same
+Azure Function that runs the device bridge.
 
 In this section, we demonstrate this concept by showing how the payload of a SigFox webhook
 integration can be converted to the body format expected by this solution. Device data is
@@ -169,15 +169,14 @@ req.body = {
 };
 ```
 
-## Example 3: connecting a device from The Things Network
-Devices in The Things Network can be easily connected to IoT Central through this solution. To do so,
-add a new HTTP integration to you application in The Things Network console (`Application > Integrations > add integration > HTTP Integration`).
+## Example 3: Connecting devices from The Things Network through the device bridge
+Devices in The Things Network (TTN) can be easily connected to IoT Central through this solution. To do so, add a new HTTP integration to you application in The Things Network console (`Application > Integrations > add integration > HTTP Integration`).
 Also make sure that your application has a decoder function defined, so the payload of your device
 messages can be automatically converted to JSON before being sent to the Azure Function.
 
-After the integration has be defined, add the following code **before** the call to `handleMessage`
+After the integration has been defined, add the following code **before** the call to `handleMessage`
 in line 21 of the `IoTCIntegration > index.js` file of your Azure Function. This will translate
-the body of your HTTP integration to the expected format:
+the body of your HTTP integration to the expected format.
 
 ```javascript
 req.body = {
@@ -189,7 +188,7 @@ req.body = {
 ```
 
 ## Limitations
-This cloud gateway only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this cloud gateway. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
+This device bridge only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this device bridge. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
 
 # Contributing
 
