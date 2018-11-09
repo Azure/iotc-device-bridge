@@ -88,8 +88,8 @@ Replace the segment
   "apiVersion": "2016-09-01",
   "location": "[resourceGroup().location]",
   "tags": {
-      "iotCentral": "cloud-gateway",
-      "iotCentralCloudGateway": "app-service-plan"
+      "iotCentral": "device-bridge",
+      "iotCentralDeviceBridge": "app-service-plan"
   },
   "properties": {
       "name": "[variables('planName')]"

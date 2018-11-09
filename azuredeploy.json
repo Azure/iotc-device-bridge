@@ -42,8 +42,8 @@
             "apiVersion": "2016-09-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "iotCentral": "cloud-gateway",
-                "iotCentralCloudGateway": "app-service-plan"
+                "iotCentral": "device-bridge",
+                "iotCentralDeviceBridge": "app-service-plan"
             },
             "properties": {
                 "name": "[variables('planName')]"
@@ -56,8 +56,8 @@
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "tags": {
-                "iotCentral": "cloud-gateway",
-                "iotCentralCloudGateway": "function-app"
+                "iotCentral": "device-bridge",
+                "iotCentralDeviceBridge": "function-app"
             },
             "identity": {
                 "type": "SystemAssigned"
