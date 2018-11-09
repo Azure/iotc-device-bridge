@@ -156,7 +156,7 @@ req.body = {
     device: {
         deviceId: req.body.device
     },
-    measurements: require('./converters/sigFox')(payloadDefinition, req.body.data)
+    measurements: require('./converters/sigfox')(payloadDefinition, req.body.data)
 };
 ```
 
