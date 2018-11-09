@@ -137,26 +137,17 @@ webhook. For such systems, the message payload must be converted to the expected
 before it can be processed by the device bridge. This conversion can be performed in the same
 Azure Function that runs the device bridge.
 
-In this section, we demonstrate this concept by showing how the payload of a SigFox webhook
+In this section, we demonstrate this concept by showing how the payload of a Sigfox webhook
 integration can be converted to the body format expected by this solution. Device data is
-transmitted from the SigFox cloud in a hexadecimal string format. For convenience, we have
+transmitted from the Sigfox cloud in a hexadecimal string format. For convenience, we have
 provided a conversion function for this format, which accepts a subset of the possible
-field types in a SigFox device payload (`int` and `uint` of 8, 16, 32, or 64 bits;
+field types in a Sigfox device payload (`int` and `uint` of 8, 16, 32, or 64 bits;
 `float` of 32 or 64 bits; `little-endian` and `big-endian`). To process messages from a
-SigFox webhook integration, the following changes are needed to the `IoTCIntegration > index.js`
+Sigfox webhook integration, the following changes are needed to the `IoTCIntegration/index.js`
 file of the Function App:
 
-- SigFox devices expect a `204` response code. To do this, add the following code snippet
-**after** the call to `handleMessage` in line 21:
-
-```javascript
-context.res = {
-    status: 204
-};
-```
-
 - To convert the message payload, add the following code **before** the call to `handleMessage`
-in line 21 (replacing `payloadDefinition` by your SigFox payload definition):
+in line 21 (replacing `payloadDefinition` by your Sigfox payload definition):
 
 ```javascript
 const payloadDefinition = 'gforce::uint:8 lat::uint:8 lon::uint:16'; // Replace this with your payload definition
@@ -169,13 +160,22 @@ req.body = {
 };
 ```
 
+- Sigfox devices expect a `204` response code. To do this, add the following code snippet
+**after** the call to `handleMessage` in line 21:
+
+```javascript
+context.res = {
+    status: 204
+};
+```
+
 ## Example 3: Connecting devices from The Things Network through the device bridge
 Devices in The Things Network (TTN) can be easily connected to IoT Central through this solution. To do so, add a new HTTP integration to you application in The Things Network console (`Application > Integrations > add integration > HTTP Integration`).
 Also make sure that your application has a decoder function defined, so the payload of your device
 messages can be automatically converted to JSON before being sent to the Azure Function.
 
 After the integration has been defined, add the following code **before** the call to `handleMessage`
-in line 21 of the `IoTCIntegration > index.js` file of your Azure Function. This will translate
+in line 21 of the `IoTCIntegration/index.js` file of your Azure Function. This will translate
 the body of your HTTP integration to the expected format.
 
 ```javascript
