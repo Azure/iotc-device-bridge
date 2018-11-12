@@ -10,14 +10,14 @@ const supportedSizes = [8, 16, 32, 64];
 const supportedEndianess = ['little-endian', 'big-endian'];
 
 /**
- * Converts SigFox device data in HEX format to a map of measurement field names to values.
+ * Converts Sigfox device data in HEX format to a map of measurement field names to values.
  * 
  * Supports:
  *   - 'int', 'uint', and 'float' types
  *   - 8, 16, 32, and 64 bit sizes
  *   - 'little-endian' and 'big-endian'
  * 
- * @param payloadDefinition SigFox payload definition
+ * @param payloadDefinition Sigfox payload definition
  * @param payload HEX device data
  */
 module.exports = function (payloadDefinition, payload) {
