@@ -238,11 +238,11 @@ This device bridge only forwards messages to IoT Central, and does not send mess
 
 ## Package integrity
 The template provided here deploys a packaged version of the code in this repository to an Azure
-Function. You can check the integrity of the code being deployed by verifying that the `MD5` hash
+Function. You can check the integrity of the code being deployed by verifying that the `SHA256` hash
 of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
 
 ```
-0C478E6A75E6BBCDA487B91EF7523F68
+0179E580D2FCD062E21B18A6C0677F0D34D89B65C17FB3A1A79F2A8F15E728CD
 ```
 
 # Contributing
