@@ -59,8 +59,8 @@ The custom template in this repository will provision the following Azure resour
 - App Service Plan (S1 tier)
 - Function App
 
-The estimated total cost of these resources is **$75/month**. The majority of this cost ($73) comes from the App Service Plan. We chose this plan because it offers dedicated compute
-resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
+The majority of the estimated total cost of these resources comes from the [price of a standard App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
+We chose this plan because it offers dedicated compute resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
 
 To reduce the cost of this solution, you can:
 1. **Remove the provisioned resources when they are not in use.**
@@ -235,6 +235,15 @@ req.body = {
 
 ## Limitations
 This device bridge only forwards messages to IoT Central, and does not send messages back to devices. Due to the unidirectional nature of this solution, `settings` and `commands` will **not** work for devices that connect to IoT Central through this device bridge. To use these features, a device must be connected directly to IoT Central using one of the [Azure IoT device SDKs](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks).
+
+## Package integrity
+The template provided here deploys a packaged version of the code in this repository to an Azure
+Function. You can check the integrity of the code being deployed by verifying that the `SHA256` hash
+of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
+
+```
+0179E580D2FCD062E21B18A6C0677F0D34D89B65C17FB3A1A79F2A8F15E728CD
+```
 
 # Contributing
 
