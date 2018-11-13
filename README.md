@@ -59,8 +59,8 @@ The custom template in this repository will provision the following Azure resour
 - App Service Plan (S1 tier)
 - Function App
 
-The estimated total cost of these resources is **$75/month**. The majority of this cost ($73) comes from the App Service Plan. We chose this plan because it offers dedicated compute
-resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
+The majority of the estimated total cost of these resources comes from the [price of a standard App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
+We chose this plan because it offers dedicated compute resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
 
 To reduce the cost of this solution, you can:
 1. **Remove the provisioned resources when they are not in use.**
