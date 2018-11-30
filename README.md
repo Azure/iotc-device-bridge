@@ -56,23 +56,35 @@ Messages sent to the device bridge must have the following format in the Body:
 The custom template in this repository will provision the following Azure resources:
 - Key Vault, needed to store your IoT Central key
 - Storage Account
-- App Service Plan (S1 tier)
 - Function App
 
-The majority of the estimated total cost of these resources comes from the [price of a standard App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
-We chose this plan because it offers dedicated compute resources which leads to faster server response times. This is a critical factor for IoT platforms in the cloud that allow streaming of lots of device data through webhooks. With this setup, the maximum observed performance of the Azure Function in this repository was around **1,500 device messages per minute**.
-
-To reduce the cost of this solution, you can:
-1. **Remove the provisioned resources when they are not in use.**
-2. **Replace the App Service Plan by a Consumption Plan.** While this option does not offer dedicated compute resources, it may be enough for testing purposes or for applications that tolerate higher server response times. You can learn more about the [Azure Function hosting options
+The Function App runs on a [consumption plan](https://azure.microsoft.com/en-us/pricing/details/functions/).
+While this option does not offer dedicated compute resources, it fulfills the needs of most usage scenarios.
+If your application depends on streaming a large number of device messages, you may choose to replace the
+consumption plan by an [App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
+This plan offers dedicated compute resources, which leads to faster server response times. Using a standard App Service Plan, the maximum observed performance of the Azure Function in this repository was around
+**1,500 device messages per minute**. You can learn more about the [Azure Function hosting options
 in documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale).
 
-To use a Consumption Plan instead of an App Service Plan, edit the custom template before deploying. Click the `Edit template` button. 
+To use an App Service Plan instead of a consumption plan, edit the custom template before deploying. Click the `Edit template` button.
 
  ![Edit template](assets/editTemplate.PNG "Edit template")
   
 Replace the segment
-
+```json
+{
+  "type": "Microsoft.Web/serverfarms",
+  "apiVersion": "2015-04-01",
+  "name": "[variables('planName')]",
+  "location": "[resourceGroup().location]",
+  "properties": {
+    "name": "[variables('planName')]",
+    "computeMode": "Dynamic",
+    "sku": "Dynamic"
+  }
+},
+```
+with
 ```json
 {
   "type": "Microsoft.Web/serverfarms",
@@ -96,23 +108,7 @@ Replace the segment
   }
 },
 ```
-
-with
-
-```json
-{
-  "type": "Microsoft.Web/serverfarms",
-  "apiVersion": "2015-04-01",
-  "name": "[variables('planName')]",
-  "location": "[resourceGroup().location]",
-  "properties": {
-    "name": "[variables('planName')]",
-    "computeMode": "Dynamic",
-    "sku": "Dynamic"
-  }
-},
-```
-Here is the [sample custom template in Github](https://github.com/Azure/azure-quickstart-templates/blob/abaf3c3eaa81cc5cba5ccc253b89a99569a42ac3/101-function-app-create-dynamic/azuredeploy.json#L49) where this snippet came from.
+Additionally, edit the template to include `"alwaysOn": true` in the configurations of the Function App resource (under `properties > siteConfig`, right before `appSettings`). The [alwaysOn configuration](https://github.com/Azure/Azure-Functions/wiki/Enable-Always-On-when-running-on-dedicated-App-Service-Plan) ensures that the function app is running at all times.
 
 ## Example 1: Connecting Particle devices through the device bridge
 To connect a Particle device through the device bridge to IoT Central, go to the Particle console and create a new webhook integration. Set the `Request Format` to `JSON` and, under `Advanced Settings`, use the following custom body format:
