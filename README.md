@@ -223,7 +223,7 @@ the body of your HTTP integration to the expected format.
 ```javascript
 req.body = {
     device: {
-        deviceId: req.body.dev_id
+        deviceId: req.body.hardware_serial
     },
     measurements: req.body.payload_fields
 };
