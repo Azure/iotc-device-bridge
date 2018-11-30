@@ -56,7 +56,7 @@ module.exports = async function (context, device, measurements) {
 };
 
 /**
- * @returns true if measurements object is valid, i.e., a map of field names to numbers.
+ * @returns true if measurements object is valid, i.e., a map of field names to numbers or strings.
  */
 function validateMeasurements(measurements) {
     if (!measurements || typeof measurements !== 'object') {
@@ -64,7 +64,7 @@ function validateMeasurements(measurements) {
     }
 
     for (const field in measurements) {
-        if (typeof measurements[field] !== 'number') {
+        if (typeof measurements[field] !== 'number' && typeof measurements[field] !== 'string') {
             return false;
         }
     }

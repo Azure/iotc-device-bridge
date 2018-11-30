@@ -39,12 +39,13 @@ Messages sent to the device bridge must have the following format in the Body:
     "measurements": {
         "temp": 20.31,
         "pressure": 50,
-        "humidity": 8.5
+        "humidity": 8.5,
+        "ledColor": "blue"
     }
 }
 ```
 
-> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers (i.e. not quoted).
+> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers or strings.
 
 6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a device will be created as an **Unassociated device**. Unassociated devices appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
 
@@ -238,7 +239,7 @@ Function. You can check the integrity of the code being deployed by verifying th
 of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
 
 ```
-0179E580D2FCD062E21B18A6C0677F0D34D89B65C17FB3A1A79F2A8F15E728CD
+C454EFC2C275F6CC17724B115B4CB551E7A177A72A9AA61765BEC5C71D589904
 ```
 
 # Contributing
