@@ -70,7 +70,7 @@ Using a standard App Service Plan, the maximum observed performance of the Azure
 **1,500 device messages per minute**. You can learn more about the [Azure Function hosting options
 in documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale).
 
-To use an App Service Plan instead of a consumption plan, edit the custom template before deploying. Click the `Edit template` button.
+To use a dedicated App Service Plan instead of a consumption plan, edit the custom template before deploying. Click the `Edit template` button.
 
  ![Edit template](assets/editTemplate.PNG "Edit template")
   
