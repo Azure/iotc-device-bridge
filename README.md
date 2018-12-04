@@ -58,12 +58,15 @@ The custom template in this repository will provision the following Azure resour
 - Key Vault, needed to store your IoT Central key
 - Storage Account
 - Function App
+- Consumption Plan
 
 The Function App runs on a [consumption plan](https://azure.microsoft.com/en-us/pricing/details/functions/).
-While this option does not offer dedicated compute resources, it fulfills the needs of most usage scenarios.
+While this option does not offer dedicated compute resources, it allows device bridge to handle
+**hundreds of device messages per minute**, suitable for smaller fleets of devices or devices that send messages less frequently.
 If your application depends on streaming a large number of device messages, you may choose to replace the
-consumption plan by an [App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
-This plan offers dedicated compute resources, which leads to faster server response times. Using a standard App Service Plan, the maximum observed performance of the Azure Function in this repository was around
+consumption plan by dedicated a [App Service Plan](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/).
+This plan offers dedicated compute resources, which leads to faster server response times.
+Using a standard App Service Plan, the maximum observed performance of the Azure Function in this repository was around
 **1,500 device messages per minute**. You can learn more about the [Azure Function hosting options
 in documentation](https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale).
 
