@@ -1,7 +1,9 @@
 # Azure IoT Central Device Bridge
 This repository contains everything you need create a device bridge to connect other IoT clouds such as Sigfox, Particle, and The Things Network (TTN) to IoT Central. The device bridge forwards the messages your devices send to other clouds to your IoT Central app. In your IoT Central app, you can build rules and run analytics on that data, create workflows in Microsoft Flow and Azure Logic apps, export that data, and much more. This solution will provision several Azure resources into your Azure subscription that work together to transform and forward device messages through a webhook integration in Azure Functions.
 
-> To deploy device bridge, you will need an Azure account. You can create a free one [here](https://aka.ms/aft-iot). The solution also requires an IoT Central app to connect the devices; instructions to create a free app can be found [here](https://docs.microsoft.com/en-us/azure/iot-central/quick-deploy-iot-central).
+To use the device bridge solution, you will need the following:
+- an Azure account. You can create a free Azure account from [here](https://aka.ms/aft-iot)
+- an Azure IoT Central application to connect the devices. Create a free app by following [these instructions](https://docs.microsoft.com/en-us/azure/iot-central/quick-deploy-iot-central)
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fiotc-device-bridge%2Fmaster%2Fazuredeploy.json)
 
