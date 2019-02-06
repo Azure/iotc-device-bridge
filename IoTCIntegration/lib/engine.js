@@ -13,8 +13,9 @@ const StatusError = require('../error').StatusError;
 
 const registrationHost = 'global.azure-devices-provisioning.net';
 const registrationSasTtl = 3600; // 1 hour
-const registrationApiVersion = `2018-09-01-preview`;
-const registrationRetryTimeouts = [500, 1000, 2000, 4000];
+const registrationApiVersion = `2018-11-01`;
+const registrationStatusQueryAttempts = 10;
+const registrationStatusQueryTimeout = 2000;
 const minDeviceRegistrationTimeout = 60*1000; // 1 minute
 
 const deviceCache = {};
@@ -129,13 +130,15 @@ async function getDeviceHub(context, device) {
         };
 
         // The first registration call starts the process, we then query the registration status
-        // up to 4 times.
-        for (const timeout of [...registrationRetryTimeouts, 0 /* Fail right away after the last attempt */]) {
+        // every 2 seconds, up to 10 times.
+        for (let i = 0; i < registrationStatusQueryAttempts; ++i) {
+            await new Promise(resolve => setTimeout(resolve, registrationStatusQueryTimeout));
+
             context.log('[HTTP] Querying device registration status');
             const statusResponse = await request(statusOptions);
 
             if (statusResponse.status === 'assigning') {
-                await new Promise(resolve => setTimeout(resolve, timeout));
+                continue;
             } else if (statusResponse.status === 'assigned' && statusResponse.registrationState && statusResponse.registrationState.assignedHub) {
                 return statusResponse.registrationState.assignedHub;
             } else if (statusResponse.status === 'failed' && statusResponse.registrationState && statusResponse.registrationState.errorCode === 400209) {
