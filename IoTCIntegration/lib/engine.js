@@ -26,7 +26,7 @@ const deviceCache = {};
  * @param {{ deviceId: string }} device 
  * @param {{ [field: string]: number }} measurements 
  */
-module.exports = async function (context, device, measurements) {
+module.exports = async function (context, device, measurements, timestamp) {
     if (device) {
         if (!device.deviceId || !/^[a-z0-9\-]+$/.test(device.deviceId)) {
             throw new StatusError('Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.', 400);
@@ -39,12 +39,22 @@ module.exports = async function (context, device, measurements) {
         throw new StatusError('Invalid format: invalid measurement list.', 400);
     }
 
+    if (timestamp && isNaN(Date.parse(timestamp))) {
+        throw new StatusError('Invalid format: if present, timestamp must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ)', 400);
+    }
+
     const client = Device.Client.fromConnectionString(await getDeviceConnectionString(context, device), DeviceTransport.Http);
 
     try {
+        const message = new Device.Message(JSON.stringify(measurements));
+
+        if (timestamp) {
+            message.properties.add('iothub-creation-time-utc', timestamp);
+        }
+
         await util.promisify(client.open.bind(client))();
         context.log('[HTTP] Sending telemetry for device', device.deviceId);
-        await util.promisify(client.sendEvent.bind(client))(new Device.Message(JSON.stringify(measurements)));
+        await util.promisify(client.sendEvent.bind(client))(message);
         await util.promisify(client.close.bind(client))();
     } catch (e) {
         // If the device was deleted, we remove its cached connection string
