@@ -34,7 +34,7 @@ In the console, run the command `npm install` (this command takes ~20 minutes to
 
 ![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
 
-Messages sent to the device bridge must have the following format in the Body:
+Messages sent to the device bridge must have the following format in the body:
 ```json
 {
     "device": {
@@ -48,6 +48,10 @@ Messages sent to the device bridge must have the following format in the Body:
     }
 }
 ```
+
+An optional `timestamp` field can be included in the body, to specify the UTC date and time of the message.
+This field must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ). If `timestamp` is not provided,
+the current date and time will be used.
 
 > NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers or strings.
 
@@ -246,7 +250,7 @@ Function. You can check the integrity of the code being deployed by verifying th
 of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
 
 ```
-A55889E1808D666CE03A2A32C2B304F4DADAA6F72D599CA0D4A15C8666737E4F
+4DE7C133828461E5C2E11125E7B22E12AA4E238BF19F4837E0D16950109DAF68
 ```
 
 # Contributing

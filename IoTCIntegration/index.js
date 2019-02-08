@@ -18,7 +18,7 @@ let kvToken;
 
 module.exports = async function (context, req) {
     try {
-        await handleMessage({ ...parameters, log: context.log, getSecret: getKeyVaultSecret }, req.body.device, req.body.measurements);
+        await handleMessage({ ...parameters, log: context.log, getSecret: getKeyVaultSecret }, req.body.device, req.body.measurements, req.body.timestamp);
     } catch (e) {
         context.log('[ERROR]', e.message);
 
