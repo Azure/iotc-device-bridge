@@ -87,7 +87,7 @@ function validateMeasurements(measurements) {
  * @returns true if a measurement is a location.
  */
 function isLocation(measurement) {
-    if (typeof measurement !== 'object' || typeof measurement.lat !== 'number' || typeof measurement.lon !== 'number') {
+    if (!measurement || typeof measurement !== 'object' || typeof measurement.lat !== 'number' || typeof measurement.lon !== 'number') {
         return false;
     }
 
