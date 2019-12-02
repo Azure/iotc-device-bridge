@@ -137,7 +137,7 @@ To connect a Particle device through the device bridge to IoT Central, go to the
 
 ```
 
-Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. 
+Paste in the function URL from your Azure Function, and you should see Particle devices appear as unassociated devices in IoT Central. For additional details, see [this blog post](https://blog.particle.io/2019/09/26/integrate-particle-with-azure-iot-central/) by the Particle team. 
 
 ## Example 2: Connecting Sigfox devices through the device bridge
 Some platforms may not allow you to specify the format of device messages sent through a
