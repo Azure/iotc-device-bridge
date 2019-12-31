@@ -12,9 +12,9 @@ Take the following steps to deploy an Azure Function into your subscription and 
 
 1. Click the `Deploy to Azure` button above. This opens up a custom ARM template in the Azure Portal to deploy the Azure Function.
 
-1. Go to your IoT Central application, and navigate to the `Administration > Device Connection` area.
+2. Go to your IoT Central application, and navigate to the `Administration > Device Connection` area.
   - Copy the `Scope ID` and paste it into the `Scope ID` field the custom template. 
-  - Copy one of the SAS keys, so either the `Primary Key` or the `Secondary Key`, and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
+  - In the same page, under the `Devices` tab, click `View Keys`. Copy either the `Primary key` or the `Secondary key` and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
 provisioned with the function).
 
   ![Scope ID and key](assets/scopeIdAndKey.PNG "Scope ID and key")
@@ -53,13 +53,18 @@ An optional `timestamp` field can be included in the body, to specify the UTC da
 This field must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ). If `timestamp` is not provided,
 the current date and time will be used.
 
-> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. The values of the fields in `measurements` must be numbers or strings.
+> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. For preview applications, the keys of the fields in `measurements` must match the name of a capability.
 
-6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a device will be created as an **Unassociated device**. Unassociated devices appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
+6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a new _unassociated device_ will be created:
+  - **Legacy applications (2018):** the new device will appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
+
+  ![Associate device](assets/associate.PNG "Associate device")
+
+  - **Preview applications:** the device will initially be under `Devices > All devices`. Select the device then click `migrate` to choose the appropriate template.
+
+  ![Migrate device](assets/migrate.PNG "Associate device")
 
 > NOTE: Until the device is associated to a template, HTTP calls to the function will return a 403 error status.
-
-![Associate device](assets/associate.PNG "Associate device")
 
 ## What is being provisioned? (pricing)
 The custom template in this repository will provision the following Azure resources:
