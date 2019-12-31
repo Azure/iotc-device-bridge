@@ -74,27 +74,6 @@ function validateMeasurements(measurements) {
         return false;
     }
 
-    for (const field in measurements) {
-        if (typeof measurements[field] !== 'number' && typeof measurements[field] !== 'string' && !isLocation(measurements[field])) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * @returns true if a measurement is a location.
- */
-function isLocation(measurement) {
-    if (!measurement || typeof measurement !== 'object' || typeof measurement.lat !== 'number' || typeof measurement.lon !== 'number') {
-        return false;
-    }
-
-    if ('alt' in measurement && typeof measurement.alt !== 'number') {
-        return false;
-    }
-
     return true;
 }
 
