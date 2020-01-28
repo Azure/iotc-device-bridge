@@ -52,10 +52,10 @@ module.exports = async function (context, device, measurements, timestamp) {
             message.properties.add('iothub-creation-time-utc', timestamp);
         }
 
-        await util.promisify(client.open.bind(client))();
+        await client.open();
         context.log('[HTTP] Sending telemetry for device', device.deviceId);
-        await util.promisify(client.sendEvent.bind(client))(message);
-        await util.promisify(client.close.bind(client))();
+        await client.sendEvent(message);
+        await client.close();
     } catch (e) {
         // If the device was deleted, we remove its cached connection string
         if (e.name === 'DeviceNotFoundError' && deviceCache[device.deviceId]) {
