@@ -28,7 +28,7 @@ const deviceCache = {};
  */
 module.exports = async function (context, device, measurements, timestamp) {
     if (device) {
-        if (!device.deviceId || !/^[a-z0-9\-]+$/.test(device.deviceId)) {
+        if (!device.deviceId || !/^[a-zA-Z0-9\-_]+$/.test(device.deviceId)) {
             throw new StatusError('Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.', 400);
         }
     } else {
