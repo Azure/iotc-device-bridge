@@ -255,7 +255,7 @@ Function. You can check the integrity of the code being deployed by verifying th
 of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
 
 ```
-4A3CF7179FF0B0AB6A070F596C3B8746EF1A0BA9BE51BD9952AE04047281D6DC
+B10A1661111B71E458A9F981926748BB920DD371BB88AE574F47C6BF471B350D
 ```
 
 # Contributing
