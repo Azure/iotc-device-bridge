@@ -7,7 +7,6 @@ const crypto = require('crypto');
 const request = require('request-promise-native');
 const Device = require('azure-iot-device');
 const DeviceTransport = require('azure-iot-device-http');
-const util = require('util');
 
 const StatusError = require('../error').StatusError;
 
@@ -28,8 +27,8 @@ const deviceCache = {};
  */
 module.exports = async function (context, device, measurements, timestamp) {
     if (device) {
-        if (!device.deviceId || !/^[a-z0-9\-]+$/.test(device.deviceId)) {
-            throw new StatusError('Invalid format: deviceId must be alphanumeric, lowercase, and may contain hyphens.', 400);
+        if (!device.deviceId || !/^[a-zA-Z0-9-._:]*[a-zA-Z0-9-]+$/.test(device.deviceId)) {
+            throw new StatusError("Invalid format: deviceId must be alphanumeric and may contain '-', '.', '_', ':'. Last character must be alphanumeric or hyphen.", 400);
         }
     } else {
         throw new StatusError('Invalid format: a device specification must be provided.', 400);
@@ -52,10 +51,10 @@ module.exports = async function (context, device, measurements, timestamp) {
             message.properties.add('iothub-creation-time-utc', timestamp);
         }
 
-        await util.promisify(client.open.bind(client))();
+        await client.open();
         context.log('[HTTP] Sending telemetry for device', device.deviceId);
-        await util.promisify(client.sendEvent.bind(client))(message);
-        await util.promisify(client.close.bind(client))();
+        await client.sendEvent(message);
+        await client.close();
     } catch (e) {
         // If the device was deleted, we remove its cached connection string
         if (e.name === 'DeviceNotFoundError' && deviceCache[device.deviceId]) {
