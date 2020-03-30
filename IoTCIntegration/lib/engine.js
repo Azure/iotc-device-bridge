@@ -46,6 +46,8 @@ module.exports = async function (context, device, measurements, timestamp) {
 
     try {
         const message = new Device.Message(JSON.stringify(measurements));
+        message.contentEncoding = 'utf-8';
+        message.contentType = 'application/json';
 
         if (timestamp) {
             message.properties.add('iothub-creation-time-utc', timestamp);
