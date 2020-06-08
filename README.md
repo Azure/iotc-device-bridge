@@ -20,17 +20,18 @@ provisioned with the function).
   ![ID Scope and key](assets/scopeIdAndKey.PNG "ID Scope and key")
 
 3. After the deployment is done, install the required NPM packages in the function. To do this,
-go to the Function App that was deployed to your subscription in the `Functions > IoTCIntegration > Console` tab.
+open the App Service that was deployed to your subscription, then navigate to the `Development Tools > Console` section.
 In the console, run the command `npm install` (this command takes ~20 minutes to complete, so feel free to do something else in that time).
+NPM warning messages (starting with `npm WARN`) will not prevent the successful execution of the command.
 
 ![Install packages](assets/npmInstall.PNG "Install packages")
 
-4. After the package installation finishes, the Function App needs to be restarted by clicking the
+4. After the package installation finishes, the App Service needs to be restarted by clicking the
 `Restart` button in `Overview` page.
 
 ![Restart Function App](assets/restart.PNG "Restart Function App")
 
-5. The function is now ready to use. External systems can feed device data through this device bridge and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function App in `Functions > IoTCIntegration > Get function URL`.
+5. The function is now ready to use. External systems can feed device data through this device bridge and into your IoT Central app by making HTTP POST requests to the function URL. The URL can be obtained in the newly created function in `Functions > IoTCIntegration > Code + Test > Get function URL`.
 
 ![Get function URL](assets/getFunctionUrl.PNG "Get function URL")
 
@@ -49,22 +50,30 @@ Messages sent to the device bridge must have the following format in the body:
 }
 ```
 
+Each key in the `measurements` object must match the name of a capability in the device template in the IoT Central application.
+Because this solution doesn't support specifying the interface Id in the message body, if two different interfaces
+have a capability with the same name, the measurement will be presented in both capabilities.
+For legacy applications (2018), the keys in the `measurements` object must match the measurement field names in the Azure IoT Central application.
+
 An optional `timestamp` field can be included in the body, to specify the UTC date and time of the message.
-This field must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ). If `timestamp` is not provided,
+This field must be in ISO format: YYYY-MM-DDTHH:mm:ss.sssZ (for example, `2020-06-08T20:16:54.602Z` is a valid timestamp). If `timestamp` is not provided,
 the current date and time will be used.
 
-> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens. For preview applications, the keys of the fields in `measurements` must match the name of a capability.
+> NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens.
 
-6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a new _unassociated device_ will be created:
+6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a new _unassociated device_ will be created.
+The device will initially be under `Devices > All devices`. Select the device then click `migrate` to choose the appropriate template.
+
+  ![Migrate device](assets/migrate.PNG "Associate device")
+
   - **Legacy applications (2018):** the new device will appear in your IoT Central application in `Device Explorer > Unassociated devices`. Click `Associate` and choose a device template to start receiving incoming measurements from that device in IoT Central.
 
   ![Associate device](assets/associate.PNG "Associate device")
 
-  - **Preview applications:** the device will initially be under `Devices > All devices`. Select the device then click `migrate` to choose the appropriate template.
-
-  ![Migrate device](assets/migrate.PNG "Associate device")
-
 > NOTE: Until the device is associated to a template, HTTP calls to the function will return a 403 error status.
+
+7. Optionally, logging can be enabled using Application Insights. To do so, in the newly created App Service, navigate to `Monitoring > App Service logs`,
+then click `Turn on Application Insights`. Once enabled, logs will be saved for future executions of the function.
 
 ## What is being provisioned? (pricing)
 The custom template in this repository will provision the following Azure resources:
