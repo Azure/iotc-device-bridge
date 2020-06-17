@@ -21,7 +21,7 @@ provisioned with the function).
 
 3. After the deployment is done, install the required NPM packages in the function. To do this,
 open the App Service that was deployed to your subscription, then navigate to the `Development Tools > Console` section.
-In the console, run the command `npm install` (this command takes ~20 minutes to complete, so feel free to do something else in that time).
+In the console, navigate to the function directory by running the command `cd IoTCIntegration`. Once in the correct directory, run the command `npm install` (this command takes ~20 minutes to complete, so feel free to do something else in that time).
 NPM warning messages (starting with `npm WARN`) will not prevent the successful execution of the command.
 
 ![Install packages](assets/npmInstall.PNG "Install packages")
