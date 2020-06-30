@@ -41,7 +41,7 @@ module.exports = async function (context, body) {
   // if (timestamp && isNaN(Date.parse(timestamp))) {
   //     throw new StatusError('Invalid format: if present, timestamp must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ)', 400);
   // }
-  const shipmentDevices = body.data.shipmentDevices;
+  const shipmentDevices = body.data["shipment_devices"];
   for (const deviceEnvelope of shipmentDevices) {
     const device = deviceEnvelope.imei;
     const client = Device.Client.fromConnectionString(
