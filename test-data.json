@@ -1,0 +1,122 @@
+﻿{
+  "meta": {
+    "webhook_event_id": 2263742,
+    "shipment_id": 113548,
+    "webhook_id": 161,
+    "apiname": "status",
+    "portal_id": 76,
+    "source_application_name": "AT",
+    "source_application_type": "API",
+    "target": {},
+    "url": "",
+    "apikey": "automation_tests",
+    "content_type": "application/xml"
+  },
+  "data": {
+    "event_id": 289033,
+    "shipment_id": 113548,
+    "status": "at_pickup",
+    "adv_status": "ARRIVED_AT_PICKUP",
+    "latitude": 41.875875,
+    "longitude": -87.63634,
+    "address": {
+      "zip": "60607",
+      "city": "Chicago",
+      "full": "South Lower Wacker Drive, Chicago, Illinois, 60607, United States",
+      "state": "IL",
+      "street": " South Lower Wacker Drive",
+      "country": "United States"
+    },
+    "event_time": "2020-06-30T16:42:29.584-05:00",
+    "agreed_pickup_datetime": "2020-06-30T21:42:13.000-05:00",
+    "agreed_delivery_datetime": "2020-07-02T21:42:13.000-05:00",
+    "created_datetime": "2020-06-30T21:42:35.666Z",
+    "customer_orders": [],
+    "free_forms_attributes": [],
+    "shipment_devices": [
+      {
+        "id": 105055,
+        "device_id": 7117,
+        "imei": "LOW_BATTERY_DEVICE",
+        "address": {
+          "zip": "60607",
+          "city": "Chicago",
+          "full": "South Lower Wacker Drive, Chicago, Illinois, 60607, United States",
+          "state": "IL",
+          "street": " South Lower Wacker Drive",
+          "country": "United States"
+        },
+        "coordinates": [-87.63634, 41.875875],
+        "company_id": 1327,
+        "device_type": "temperature",
+        "device_model": "AutomationTests",
+        "device_uuid": null,
+        "name": "LOW_BATTERY_DEVICE",
+        "description": null,
+        "placement": "cargo",
+        "device_created_at": "2020-06-30T21:42:29.584Z",
+        "timezone": "America/Chicago",
+        "separated": false,
+        "sensor_data": {
+          "temperature": {
+            "data": 0,
+            "units": "F"
+          }
+        },
+        "available_sensor_types": ["temperature"],
+        "device_profile": {
+          "reporting_rate": null,
+          "stationary_reporting_rate": null,
+          "tracking_link": null,
+          "tag_detection": null,
+          "ocean_mode": null,
+          "flight_mode": null,
+          "impact_alert": null,
+          "max_impact": null,
+          "tip_alert": null,
+          "max_tip": null,
+          "light_level_alert": null,
+          "min_light_level": null,
+          "max_light_level": null,
+          "temperature_alert": null,
+          "min_temperature": null,
+          "max_temperature": null,
+          "id": 14688
+        }
+      }
+    ],
+    "carrier_company": {
+      "name": "Overhaul Carrier",
+      "scac": "atscaccode"
+    },
+    "pickup": [
+      {
+        "address": {
+          "title": "Chicago",
+          "full": " South Lower Wacker Drive, Chicago, Illinois, United States, 60607",
+          "street": " South Lower Wacker Drive",
+          "city": "Chicago",
+          "state": "IL",
+          "zip": "60607",
+          "country": "United States"
+        },
+        "pickup_datetime": "2020-06-30T21:42:13.000-05:00"
+      }
+    ],
+    "delivery": [
+      {
+        "address": {
+          "title": "Austin",
+          "full": "205 West 9th Street, Austin, Texas, United States, 78701",
+          "street": "205 West 9th Street",
+          "city": "Austin",
+          "state": "TX",
+          "zip": "78701",
+          "country": "United States"
+        },
+        "delivery_datetime": "2020-07-02T21:42:13.000-05:00"
+      }
+    ],
+    "webhook_event_id": 2263742
+  }
+}
