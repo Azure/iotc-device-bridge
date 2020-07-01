@@ -1,8 +1,8 @@
 {
-  "name": "iotc-integration-azure-function",
+  "name": "oh-tmc-demo-jav",
   "version": "1.0.0",
   "private": true,
-  "description": "Sample Azure Function for cloud to cloud integration with Azure IoT Central",
+  "description": "Simple Azure Function for OH",
   "main": "index.js",
   "dependencies": {
     "azure-iot-device": "^1.7.4",

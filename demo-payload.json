@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "webhook_event_id": 305953,
+    "shipment_id": 220107,
+    "webhook_id": 11,
+    "apiname": "status",
+    "portal_id": 3,
+    "source_application_name": "PANTOS_TMS",
+    "source_application_type": "API",
+    "target": {},
+    "url": "",
+    "apikey": "jK0zLse5WN5VOvr2JB9ly7QKajeVj2R42Yz26GqZ",
+    "content_type": "application/json"
+  },
+  "data": {
+    "event_id": 42963710,
+    "shipment_id": 220107,
+    "custom_id": "",
+    "status": "in_transit",
+    "adv_status": "ENROUTE_TO_DELIVERY",
+    "additional_date_time": "2020-07-01T20:05:36.551Z",
+    "latitude": 30.401666,
+    "longitude": -97.776185,
+    "address": {
+      "zip": "78759",
+      "city": "Austin",
+      "full": "Yaupon Drive, Austin, Texas, 78759, United States",
+      "state": "TX",
+      "street": "6612 Yaupon Drive",
+      "country": "United States"
+    },
+    "event_time": "2020-07-01T15:00:02.000-05:00",
+    "agreed_pickup_datetime": "2020-07-01T11:30:00.000-05:00",
+    "agreed_delivery_datetime": "2020-07-01T12:01:00.000-05:00",
+    "created_datetime": "2020-07-01T20:05:33.137Z",
+    "reference_numbers": {
+      "shipper": "",
+      "broker": "20200701001",
+      "carrier": "",
+      "tracking": ""
+    },
+    "customer_orders": [],
+    "free_forms_attributes": [],
+    "shipment_devices": [
+      {
+        "id": 220765,
+        "device_id": 28156,
+        "imei": "72308628870290062",
+        "address": {
+          "zip": "78759",
+          "city": "Austin",
+          "full": "Yaupon Drive, Austin, Texas, 78759, United States",
+          "state": "TX",
+          "street": "6612 Yaupon Drive",
+          "country": "United States"
+        },
+        "coordinates": [-97.776185, 30.401666],
+        "company_id": 128,
+        "device_type": "gps",
+        "device_model": "SC1000-CTC",
+        "device_uuid": null,
+        "name": "72308628870290062",
+        "description": null,
+        "placement": "cargo",
+        "device_created_at": "2020-07-01T20:00:02.000Z",
+        "timezone": "America/Chicago",
+        "separated": false,
+        "sensor_data": {
+          "temperature": {
+            "data": 81.4,
+            "units": "F"
+          },
+          "light": {
+            "data": "Light"
+          },
+          "lightbyunits": {
+            "data": 883,
+            "units": "LUM",
+            "value": "Light"
+          }
+        },
+        "available_sensor_types": ["temperature", "light"],
+        "device_profile": {
+          "reporting_rate": null,
+          "stationary_reporting_rate": null,
+          "tracking_link": null,
+          "tag_detection": null,
+          "ocean_mode": null,
+          "flight_mode": null,
+          "impact_alert": null,
+          "max_impact": null,
+          "tip_alert": null,
+          "max_tip": null,
+          "light_level_alert": null,
+          "min_light_level": null,
+          "max_light_level": null,
+          "temperature_alert": null,
+          "min_temperature": null,
+          "max_temperature": null,
+          "id": 16671
+        }
+      }
+    ],
+    "carrier_company": {
+      "name": "BALA",
+      "scac": ""
+    },
+    "pickup": [
+      {
+        "address": {
+          "title": "6601 Yaupon Drive, Austin, Texas 78759, United States",
+          "full": ""
+        },
+        "pickup_datetime": "2020-07-01T11:30:00.000-05:00"
+      }
+    ],
+    "delivery": [
+      {
+        "address": {
+          "title": "NCsoft - Austin, 6801 N Capital of Texas Hwy, Austin, Texas 78731, United States",
+          "full": "6801 N Capital of Texas Hwy, Austin, Texas, US, 78731",
+          "street": "6801 N Capital of Texas Hwy",
+          "city": "Austin",
+          "state": "TX",
+          "zip": "78731",
+          "country": "US"
+        },
+        "delivery_datetime": "2020-07-01T12:01:00.000-05:00"
+      }
+    ],
+    "webhook_event_id": 305953
+  }
+}

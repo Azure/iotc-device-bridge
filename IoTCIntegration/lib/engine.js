@@ -26,22 +26,10 @@ const deviceCache = {};
  * @param {{ [field: string]: number }} measurements
  */
 module.exports = async function (context, body) {
-  // if (device) {
-  //     if (!device.deviceId || !/^[a-zA-Z0-9-._:]*[a-zA-Z0-9-]+$/.test(device.deviceId)) {
-  //         throw new StatusError("Invalid format: deviceId must be alphanumeric and may contain '-', '.', '_', ':'. Last character must be alphanumeric or hyphen.", 400);
-  //     }
-  // } else {
-  //     throw new StatusError('Invalid format: a device specification must be provided.', 400);
-  // }
+  context.log.verbose("Received Data:");
+  context.log.verbose(JSON.stringify(body.req));
 
-  // if (!validateMeasurements(measurements)) {
-  //     throw new StatusError('Invalid format: invalid measurement list.', 400);
-  // }
-
-  // if (timestamp && isNaN(Date.parse(timestamp))) {
-  //     throw new StatusError('Invalid format: if present, timestamp must be in ISO format (e.g., YYYY-MM-DDTHH:mm:ss.sssZ)', 400);
-  // }
-  const shipmentDevices = body.data["shipment_devices"];
+  const shipmentDevices = body["data"]["shipment_devices"];
   for (const deviceEnvelope of shipmentDevices) {
     const device = deviceEnvelope.imei;
     const client = Device.Client.fromConnectionString(
