@@ -11,6 +11,32 @@ To use the device bridge solution, you will need the following:
 
 ## Instructions
 
+## Deploying
+
+- ZIP up the function
+
+```
+zip -r iotc-bridge-az-function.zip IoTCIntegration
+```
+
+- Upload the ZIP file by dragging and dropping the file in the directory browser here:
+
+```
+https://iotc-pln62j7k2vohgkzg.scm.azurewebsites.net/ZipDeployUI
+```
+
+You can deploy from the `az` CLI like this:
+
+```
+# deploy from template
+az deployment group create --resource-group IOTC --name az-cli-test-jav --template-file azuredeploy.json
+
+# CANT: deploy from zip file
+# az functionapp deployment source config-zip --src iotc-bridge-az-function.zip -n IoTCIntegration --resource-group IOTC
+```
+
+You will need to be auth'd with the CLI; you will need to also know the `scopeID` and `SAS` key(s).
+
 Take the following steps to deploy an Azure Function into your subscription and set up the device bridge.
 
 1. Click the `Deploy to Azure` button above. This opens up a custom ARM template in the Azure Portal to deploy the Azure Function.
