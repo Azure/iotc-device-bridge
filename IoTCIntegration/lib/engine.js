@@ -27,7 +27,7 @@ const deviceCache = {};
  */
 module.exports = async function (context, body) {
   context.log.verbose("Received Data:");
-  context.log.verbose(JSON.stringify(body.req));
+  context.log.verbose(JSON.stringify(body));
 
   const shipmentDevices = body["data"]["shipment_devices"];
   for (const deviceEnvelope of shipmentDevices) {
