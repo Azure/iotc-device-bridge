@@ -31,4 +31,6 @@ jobs:
           az deployment group create \
             --name AzureFunctionDeployment \
             --resource-group IOTC \
-            --template-file azuredeploy.json
+            --template-file azuredeploy.json \
+            --parameters iotCentralSASKey=${{ secrets.IOTCENTRALSASKEY }} \
+            --parameters scopeID=${{ secrets.SCOPEID }}
