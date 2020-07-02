@@ -9,6 +9,8 @@ To use the device bridge solution, you will need the following:
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjasonv-overhaul%2Fiotc-device-bridge%2Fmaster%2Fazuredeploy.json)
 
+![CI](https://github.com/jasonv-overhaul/iotc-device-bridge/workflows/CI/badge.svg?branch=main)s
+
 ## Instructions
 
 ## Deploying
