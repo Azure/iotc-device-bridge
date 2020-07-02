@@ -34,9 +34,9 @@
             "name": "[variables('planName')]",
             "location": "[resourceGroup().location]",
             "properties": {
-              "name": "[variables('planName')]",
-              "computeMode": "Dynamic",
-              "sku": "Dynamic"
+                "name": "[variables('planName')]",
+                "computeMode": "Dynamic",
+                "sku": "Dynamic"
             }
         },
         {
@@ -57,15 +57,42 @@
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('planName'))]",
                 "siteConfig": {
                     "appSettings": [
-                        { "name": "AzureWebJobsDashboard", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "AzureWebJobsStorage", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('functionAppName'))]" },
-                        { "name": "FUNCTIONS_EXTENSION_VERSION", "value": "~2" },
-                        { "name": "WEBSITE_NODE_DEFAULT_VERSION", "value": "8.4.0" },
-                        { "name": "WEBSITE_HTTPSCALEV2_ENABLED", "value": 0 },
-                        { "name": "ID_SCOPE", "value": "[parameters('scopeID')]" },
-                        { "name": "IOTC_KEY_URL", "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('iotcKeyName'), '/')]" }
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppName'))]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~2"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "8.4.0"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPSCALEV2_ENABLED",
+                            "value": 0
+                        },
+                        {
+                            "name": "ID_SCOPE",
+                            "value": "[parameters('scopeID')]"
+                        },
+                        {
+                            "name": "IOTC_KEY_URL",
+                            "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('iotcKeyName'), '/')]"
+                        }
                     ]
                 }
             },
@@ -79,7 +106,7 @@
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
                     "properties": {
-                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-device-bridge/master/iotc-bridge-az-function.zip"
+                        "packageUri": "https://raw.githubusercontent.com/jasonv-overhaul/iotc-device-bridge/main/iotc-bridge-az-function.zip"
                     }
                 }
             ],
