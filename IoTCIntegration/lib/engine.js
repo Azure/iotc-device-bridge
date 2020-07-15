@@ -12,7 +12,7 @@ const StatusError = require('../error').StatusError;
 
 const registrationHost = 'global.azure-devices-provisioning.net';
 const registrationSasTtl = 3600; // 1 hour
-const registrationApiVersion = `2018-11-01`;
+const registrationApiVersion = `2019-03-31`;
 const registrationStatusQueryAttempts = 10;
 const registrationStatusQueryTimeout = 2000;
 const minDeviceRegistrationTimeout = 60*1000; // 1 minute
@@ -116,7 +116,7 @@ async function getDeviceHub(context, device) {
         method: 'PUT',
         json: true,
         headers: { Authorization: sasToken },
-        body: { registrationId: deviceId }
+        body: { registrationId: deviceId, payload: { iotcModelId: modelId } }
     };
 
     try {
