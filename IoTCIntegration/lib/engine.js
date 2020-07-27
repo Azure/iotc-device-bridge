@@ -116,7 +116,7 @@ async function getDeviceHub(context, device) {
         method: 'PUT',
         json: true,
         headers: { Authorization: sasToken },
-        body: { registrationId: deviceId, payload: { iotcModelId: modelId } }
+        body: { registrationId: deviceId, payload: { iotcModelId: device.modelId } }
     };
 
     try {
