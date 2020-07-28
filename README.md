@@ -59,6 +59,8 @@ An optional `timestamp` field can be included in the body, to specify the UTC da
 This field must be in ISO format: YYYY-MM-DDTHH:mm:ss.sssZ (for example, `2020-06-08T20:16:54.602Z` is a valid timestamp). If `timestamp` is not provided,
 the current date and time will be used.
 
+An optional `modelId` field can also be included in the body. This will cause the device to be associated to a Device Template during provisioning. This functionality is not supported by legacy apps.
+
 > NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens.
 
 6. When a message with a new `deviceId` is sent to IoT Central by the device bridge, a new _unassociated device_ will be created.
@@ -264,7 +266,7 @@ Function. You can check the integrity of the code being deployed by verifying th
 of the `iotc-bridge-az-function.zip` file in the root of this repository matches the following:
 
 ```
-510D3252A7DC37F0D07A34A93D09B976BFAF91F13E0E723CCD2A85C1ACC4524E
+1d589b62931df9e9738505f6d595741e88cd556a37d3d6bd753f10e6effed931
 ```
 
 # Contributing
