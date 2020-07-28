@@ -59,7 +59,7 @@ An optional `timestamp` field can be included in the body, to specify the UTC da
 This field must be in ISO format: YYYY-MM-DDTHH:mm:ss.sssZ (for example, `2020-06-08T20:16:54.602Z` is a valid timestamp). If `timestamp` is not provided,
 the current date and time will be used.
 
-An optional `modelId` field can also be included in the body. This will cause the device to be associated to the given modelId during provisioning. This functionality is not supported by legacy apps.
+An optional `modelId` field can also be included in the body. This will cause the device to be associated to a Device Template during provisioning. This functionality is not supported by legacy apps.
 
 > NOTE: `deviceId` must be alphanumeric, lowercase, and may contain hyphens.
 
