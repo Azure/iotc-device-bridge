@@ -14,10 +14,11 @@ Take the following steps to deploy an Azure Function into your subscription and 
 
 2. Go to your IoT Central application, and navigate to the `Administration > Device Connection` area.
   - Copy the `ID Scope` and paste it into the `Scope ID` field the custom template. 
-  - In the same page, under the `Devices` tab, click `View Keys`. Copy either the `Primary key` or the `Secondary key` and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
+  - In the same page, under `Enrollment groups`, open the `SAS-IoT-Devices` group. In the group page, copy either the `Primary key` or the `Secondary key` and paste it into the `Iot Central SAS Key` field. (this key will be stored in a Key Vault
 provisioned with the function).
 
-  ![ID Scope and key](assets/scopeIdAndKey.PNG "ID Scope and key")
+  ![ID Scope](assets/scopeIdAndKey.PNG "ID Scope and key")
+  ![Key](assets/enrollmentGroup.PNG "Key")
 
 3. After the deployment is done, install the required NPM packages in the function. To do this,
 open the App Service that was deployed to your subscription, then navigate to the `Development Tools > Console` section.
