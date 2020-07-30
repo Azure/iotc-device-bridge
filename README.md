@@ -18,7 +18,7 @@ Take the following steps to deploy an Azure Function into your subscription and 
 provisioned with the function).
 
   ![ID Scope](assets/scopeIdAndKey.PNG "ID Scope and key")
-  ![Key](assets/enrollmentGroup.PNG "Key")
+  ![Key](assets/sasEnrollmentGroup.PNG "Key")
 
 3. After the deployment is done, install the required NPM packages in the function. To do this,
 open the App Service that was deployed to your subscription, then navigate to the `Development Tools > Console` section.
