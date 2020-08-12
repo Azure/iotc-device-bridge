@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-const request = require('request-promise-native');
+const fetch = require('node-fetch');
 const handleMessage = require('./lib/engine');
 
 const msiEndpoint = process.env.MSI_ENDPOINT;
@@ -34,30 +34,31 @@ module.exports = async function (context, req) {
  */
 async function getKeyVaultSecret(context, secretUrl, forceTokenRefresh = false) {
     if (!kvToken || forceTokenRefresh) {
+        const url = `${msiEndpoint}/?resource=https://vault.azure.net&api-version=2017-09-01`;
         const options = {
-            uri: `${msiEndpoint}/?resource=https://vault.azure.net&api-version=2017-09-01`,
-            headers: { 'Secret': msiSecret },
-            json: true
+            method: 'GET',
+            headers: { 'Secret': msiSecret }
         };
 
         try {
             context.log('[HTTP] Requesting new Key Vault token');
-            const response = await request(options);
+            const response = await fetch(url, options).then(res => res.json())
             kvToken = response.access_token;
         } catch (e) {
+            context.log('fail: ' + e);
             throw new Error('Unable to get Key Vault token');
         }
     }
 
+    url = `${secretUrl}?api-version=2016-10-01`;
     var options = {
-        url: `${secretUrl}?api-version=2016-10-01`,
+        method : 'GET',
         headers : { 'Authorization' : `Bearer ${kvToken}` },
-        json: true
     };
 
     try {
         context.log('[HTTP] Requesting Key Vault secret', secretUrl);
-        const response = await request(options);
+        const response = await fetch(url, options).then(res => res.json())
         return response && response.value;
     } catch(e) {
         if (e.statusCode === 401 && !forceTokenRefresh) {
