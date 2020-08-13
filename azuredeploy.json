@@ -79,7 +79,7 @@
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
                     "properties": {
-                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-device-bridge/fix-request-dep/iotc-bridge-az-function.zip"
+                        "packageUri": "https://raw.githubusercontent.com/Azure/iotc-device-bridge/master/iotc-bridge-az-function.zip"
                     }
                 }
             ],
