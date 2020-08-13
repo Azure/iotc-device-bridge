@@ -117,11 +117,11 @@ async function getDeviceHub(context, device) {
         headers: { 'Content-Type': 'application/json', Authorization: sasToken },
         body: JSON.stringify({ registrationId: deviceId, payload: { iotcModelId: device.modelId } })
     };
-    context.log(registrationOptions);
+
     try {
         context.log('[HTTP] Initiating device registration');
         const response = await fetch(url, registrationOptions).then(res => res.json());
-        context.log(response);
+
         if (response.status !== 'assigning' || !response.operationId) {
             throw new Error('Unknown server response');
         }

@@ -7,7 +7,6 @@
   "dependencies": {
     "azure-iot-device": "^1.7.4",
     "azure-iot-device-http": "^1.7.4",
-    "request": "^2.88.0",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {},
