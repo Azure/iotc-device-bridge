@@ -4,7 +4,7 @@
  */
 
 const crypto = require('crypto');
-const request = require('request-promise-native');
+const fetch = require('node-fetch');
 const Device = require('azure-iot-device');
 const DeviceTransport = require('azure-iot-device-http');
 
@@ -111,26 +111,24 @@ async function getDeviceHub(context, device) {
 
     const sasToken = await getRegistrationSasToken(context, deviceId);
 
+    url = `https://${registrationHost}/${context.idScope}/registrations/${deviceId}/register?api-version=${registrationApiVersion}`;
     const registrationOptions = {
-        url: `https://${registrationHost}/${context.idScope}/registrations/${deviceId}/register?api-version=${registrationApiVersion}`,
         method: 'PUT',
-        json: true,
-        headers: { Authorization: sasToken },
-        body: { registrationId: deviceId, payload: { iotcModelId: device.modelId } }
+        headers: { 'Content-Type': 'application/json', Authorization: sasToken },
+        body: JSON.stringify({ registrationId: deviceId, payload: { iotcModelId: device.modelId } })
     };
 
     try {
         context.log('[HTTP] Initiating device registration');
-        const response = await request(registrationOptions);
+        const response = await fetch(url, registrationOptions).then(res => res.json());
 
         if (response.status !== 'assigning' || !response.operationId) {
             throw new Error('Unknown server response');
         }
 
+        url = `https://${registrationHost}/${context.idScope}/registrations/${deviceId}/operations/${response.operationId}?api-version=${registrationApiVersion}`;
         const statusOptions = {
-            url: `https://${registrationHost}/${context.idScope}/registrations/${deviceId}/operations/${response.operationId}?api-version=${registrationApiVersion}`,
             method: 'GET',
-            json: true,
             headers: { Authorization: sasToken }
         };
 
@@ -140,7 +138,7 @@ async function getDeviceHub(context, device) {
             await new Promise(resolve => setTimeout(resolve, registrationStatusQueryTimeout));
 
             context.log('[HTTP] Querying device registration status');
-            const statusResponse = await request(statusOptions);
+            const statusResponse = await fetch(url, statusOptions).then(res => res.json());
 
             if (statusResponse.status === 'assigning') {
                 continue;
