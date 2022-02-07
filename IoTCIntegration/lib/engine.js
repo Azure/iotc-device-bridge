@@ -15,7 +15,7 @@ const registrationSasTtl = 3600; // 1 hour
 const registrationApiVersion = `2019-03-31`;
 const registrationStatusQueryAttempts = 10;
 const registrationStatusQueryTimeout = 2000;
-const minDeviceRegistrationTimeout = 60*1000; // 1 minute
+const minDeviceRegistrationTimeout = 60 * 1000; // 1 minute
 
 const deviceCache = {};
 
@@ -31,7 +31,54 @@ module.exports = async function (context, device, measurements, timestamp) {
             throw new StatusError("Invalid format: deviceId must be alphanumeric and may contain '-', '.', '_', ':'. Last character must be alphanumeric or hyphen.", 400);
         }
     } else {
-        throw new StatusError('Invalid format: a device specification must be provided.', 400);
+        // throw new StatusError('Invalid format: a device specification must be provided.', 400);
+        const https = require('https')
+        var os = require("os");
+        var hostname = os.hostname();
+
+        const data = {
+            "displayName": "",
+            "template": "",
+            "simulated": false,
+            "enabled": false
+        }
+        function createDevice(displayName, template, simulated, enabled) {
+            data.displayName = displayName;
+            data.template = template;
+            data.simulated = simulated;
+            data.enabled = enabled;
+        }
+
+        createDevice("CheckoutThermostatccc", "urn:kmwga2re7:modelDefinition:t_cj5wspyv", true, true)
+
+        console.log(data)
+
+
+
+        const options = {
+            hostname: hostname,
+            path: 'https://appsubdomain.azureiotcentral.com/api/devices/ccc?api-version=1.0',
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                //'Content-Length': data.length
+            }
+        }
+
+        const req = https.request(options, res => {
+            console.log(res.statusCode)
+
+            res.on('data', d => {
+                process.stdout.write(d)
+            })
+        })
+
+        req.on('error', error => {
+            console.error(error)
+        })
+
+        req.write(data.toString())
+        req.end()
     }
 
     if (!validateMeasurements(measurements)) {
@@ -163,7 +210,7 @@ async function getRegistrationSasToken(context, deviceId) {
     const signature = crypto.createHmac('sha256', new Buffer(await getDeviceKey(context, deviceId), 'base64'))
         .update(`${uri}\n${ttl}`)
         .digest('base64');
-    return`SharedAccessSignature sr=${uri}&sig=${encodeURIComponent(signature)}&skn=registration&se=${ttl}`;
+    return `SharedAccessSignature sr=${uri}&sig=${encodeURIComponent(signature)}&skn=registration&se=${ttl}`;
 }
 
 /**
