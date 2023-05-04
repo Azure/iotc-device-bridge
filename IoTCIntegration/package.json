@@ -1,12 +1,12 @@
 {
   "name": "iotc-integration-azure-function",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Sample Azure Function for cloud to cloud integration with Azure IoT Central",
   "main": "index.js",
   "dependencies": {
-    "azure-iot-device": "^1.7.4",
-    "azure-iot-device-http": "^1.7.4",
+    "azure-iot-device": "^1.18.2",
+    "azure-iot-device-http": "^1.14.2",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {},

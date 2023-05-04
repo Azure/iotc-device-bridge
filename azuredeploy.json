@@ -1,19 +1,23 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.1",
     "parameters": {
         "scopeID": {
-            "type": "String"
+            "type": "string"
         },
         "iotCentralSASKey": {
-            "type": "String"
+            "type": "string"
+        },
+        "currentTime": {
+            "type": "string",
+            "defaultValue": "[utcNow('u')]"
         }
     },
     "variables": {
-        "planName": "[concat('iotc-pln', uniqueString(resourceGroup().id))]",
-        "storageName": "[concat('iotcsa', uniqueString(resourceGroup().id))]",
-        "functionAppName": "[concat('iotc-fn', uniqueString(resourceGroup().id))]",
-        "keyVaultName": "[concat('iotcvlt', uniqueString(resourceGroup().id))]",
+        "planName": "[concat('iotcpln', uniqueString(parameters('currentTime')))]",
+        "storageName": "[concat('iotcsa', uniqueString(parameters('currentTime')))]",
+        "functionAppName": "[concat('iotcfn', uniqueString(parameters('currentTime')))]",
+        "keyVaultName": "[concat('iotcvlt', uniqueString(parameters('currentTime')))]",
         "iotcKeyName": "iotckey"
     },
     "resources": [
@@ -25,29 +29,27 @@
             },
             "kind": "Storage",
             "name": "[variables('storageName')]",
-            "apiVersion": "2018-07-01",
+            "apiVersion": "2022-09-01",
             "location": "[resourceGroup().location]"
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2015-04-01",
+            "apiVersion": "2022-09-01",
             "name": "[variables('planName')]",
             "location": "[resourceGroup().location]",
-            "properties": {
-              "name": "[variables('planName')]",
-              "computeMode": "Dynamic",
-              "sku": "Dynamic"
+            "sku": {
+                "name": "Y1"
             }
         },
         {
             "type": "Microsoft.Web/sites",
             "kind": "functionapp",
             "name": "[variables('functionAppName')]",
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2022-09-01",
             "location": "[resourceGroup().location]",
             "tags": {
                 "iotCentral": "device-bridge",
-                "iotCentralDeviceBridge": "function-app"
+                "iotCentralDeviceBridge": "function-app",
             },
             "identity": {
                 "type": "SystemAssigned"
@@ -57,24 +59,51 @@
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('planName'))]",
                 "siteConfig": {
                     "appSettings": [
-                        { "name": "AzureWebJobsDashboard", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "AzureWebJobsStorage", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING", "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]" },
-                        { "name": "WEBSITE_CONTENTSHARE", "value": "[toLower(variables('functionAppName'))]" },
-                        { "name": "FUNCTIONS_EXTENSION_VERSION", "value": "~2" },
-                        { "name": "WEBSITE_NODE_DEFAULT_VERSION", "value": "8.4.0" },
-                        { "name": "WEBSITE_HTTPSCALEV2_ENABLED", "value": 0 },
-                        { "name": "ID_SCOPE", "value": "[parameters('scopeID')]" },
-                        { "name": "IOTC_KEY_URL", "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('iotcKeyName'), '/')]" }
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppName'))]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~4"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "~18"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPSCALEV2_ENABLED",
+                            "value": 0
+                        },
+                        {
+                            "name": "ID_SCOPE",
+                            "value": "[parameters('scopeID')]"
+                        },
+                        {
+                            "name": "IOTC_KEY_URL",
+                            "value": "[concat('https://', variables('keyVaultName'), '.vault.azure.net/secrets/', variables('iotcKeyName'), '/')]"
+                        }
                     ]
                 }
             },
             "resources": [
                 {
                     "name": "MSDeploy",
-                    "type": "Extensions",
+                    "type": "extensions",
                     "location": "[resourceGroup().location]",
-                    "apiVersion": "2015-08-01",
+                    "apiVersion": "2022-09-01",
                     "dependsOn": [
                         "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
                     ],
@@ -91,12 +120,12 @@
         {
             "type": "Microsoft.KeyVault/vaults",
             "name": "[variables('keyVaultName')]",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "2022-07-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "sku": {
                     "family": "A",
-                    "name": "Standard"
+                    "name": "standard"
                 },
                 "tenantId": "[subscription().tenantId]",
                 "accessPolicies": [
@@ -106,9 +135,9 @@
                         "permissions": {
                             "keys": [],
                             "secrets": [
-                                "Get",
-                                "List",
-                                "Recover"
+                                "get",
+                                "list",
+                                "recover"
                             ],
                             "certificates": []
                         }
@@ -119,7 +148,7 @@
                 {
                     "type": "secrets",
                     "name": "[variables('iotcKeyName')]",
-                    "apiVersion": "2015-06-01",
+                    "apiVersion": "2022-07-01",
                     "tags": {},
                     "properties": {
                         "value": "[parameters('iotCentralSASKey')]"
