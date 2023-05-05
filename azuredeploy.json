@@ -7,17 +7,13 @@
         },
         "iotCentralSASKey": {
             "type": "string"
-        },
-        "currentTime": {
-            "type": "string",
-            "defaultValue": "[utcNow('u')]"
         }
     },
     "variables": {
-        "planName": "[concat('iotcpln', uniqueString(parameters('currentTime')))]",
-        "storageName": "[concat('iotcsa', uniqueString(parameters('currentTime')))]",
-        "functionAppName": "[concat('iotcfn', uniqueString(parameters('currentTime')))]",
-        "keyVaultName": "[concat('iotcvlt', uniqueString(parameters('currentTime')))]",
+        "planName": "[concat('iotc-pln', uniqueString(resourceGroup().id))]",
+        "storageName": "[concat('iotcsa', uniqueString(resourceGroup().id))]",
+        "functionAppName": "[concat('iotc-fn', uniqueString(resourceGroup().id))]",
+        "keyVaultName": "[concat('iotcvlt', uniqueString(resourceGroup().id))]",
         "iotcKeyName": "iotckey"
     },
     "resources": [
@@ -49,7 +45,7 @@
             "location": "[resourceGroup().location]",
             "tags": {
                 "iotCentral": "device-bridge",
-                "iotCentralDeviceBridge": "function-app",
+                "iotCentralDeviceBridge": "function-app"
             },
             "identity": {
                 "type": "SystemAssigned"
