@@ -10,9 +10,9 @@
         }
     },
     "variables": {
-        "planName": "[concat('iotcpln', uniqueString(resourceGroup().id))]",
+        "planName": "[concat('iotc-pln', uniqueString(resourceGroup().id))]",
         "storageName": "[concat('iotcsa', uniqueString(resourceGroup().id))]",
-        "functionAppName": "[concat('iotcfn', uniqueString(resourceGroup().id))]",
+        "functionAppName": "[concat('iotc-fn', uniqueString(resourceGroup().id))]",
         "keyVaultName": "[concat('iotcvlt', uniqueString(resourceGroup().id))]",
         "iotcKeyName": "iotckey"
     },
